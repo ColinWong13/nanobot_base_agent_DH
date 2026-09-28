@@ -38,10 +38,17 @@ from nanobot.session.session_handles import (
 from nanobot.triggers.local_types import LocalTrigger
 from nanobot.webui.automation_results import cron_run_response, trigger_run_response
 from nanobot.webui.domains_api import (
+    add_venue,
+    create_domain,
+    delete_domain,
     domains_registry_path,
     read_domains_registry,
+    remove_venue,
+    reset_domain_tiers,
     set_domain_confirmed,
     set_venue_enabled,
+    update_domain,
+    update_venue,
 )
 from nanobot.webui.file_preview import (
     WebUIFilePreviewError,
@@ -181,6 +188,13 @@ _WEBUI_MUTATION_PATHS = {
     "skill.delete": "/api/webui/skills/delete",
     "sidebar.update": "/api/webui/sidebar-state/update",
     "domains.venue.set_enabled": "/api/webui/domains/venue/enabled",
+    "domains.venue.add": "/api/webui/domains/venue/add",
+    "domains.venue.update": "/api/webui/domains/venue/update",
+    "domains.venue.remove": "/api/webui/domains/venue/remove",
+    "domains.tier_reset": "/api/webui/domains/tier-reset",
+    "domains.create": "/api/webui/domains/create",
+    "domains.update": "/api/webui/domains/update",
+    "domains.delete": "/api/webui/domains/delete",
     "domains.confirm": "/api/webui/domains/confirm",
     "workspace.pick_folder": "/api/workspaces/pick-folder",
     "recovery.continue": "/api/webui/recovery/continue",
@@ -226,6 +240,111 @@ _WEBUI_MUTATION_PATHS = {
     "settings.mcp.oauth_complete": "/api/settings/mcp-oauth/complete",
     "settings.mcp.oauth_cancel": "/api/settings/mcp-oauth/cancel",
 }
+
+
+# --- venue registry edits ---------------------------------------------------
+#
+# One entry per mutations route, and every one is a POST body rather than a path
+# parameter, so `_is_webui_mutation_path` stays a set-membership test instead of
+# growing a regex per route.
+#
+# The `_payload_*` helpers raise ValueError, which `_domains_response` maps to a
+# 400 -- the same status a rejected edit gets from the API layer, so the page
+# handles shape and semantics failures the same way.
+
+
+def _payload_str(payload: dict[str, Any], key: str) -> str:
+    value = payload.get(key)
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{key} must be a non-empty string")
+    return value.strip()
+
+
+def _payload_bool(payload: dict[str, Any], key: str) -> bool:
+    value = payload.get(key)
+    if not isinstance(value, bool):
+        raise ValueError(f"{key} must be a boolean")
+    return value
+
+
+def _payload_dict(payload: dict[str, Any], key: str) -> dict[str, Any]:
+    value = payload.get(key)
+    if not isinstance(value, dict):
+        raise ValueError(f"{key} must be an object")
+    return value
+
+
+_DOMAINS_ACTIONS: dict[str, Callable[[dict[str, Any]], dict[str, Any]]] = {
+    "domains.venue.set_enabled": lambda p: set_venue_enabled(
+        domain_id=_payload_str(p, "domain_id"),
+        venue_name=_payload_str(p, "venue"),
+        enabled=_payload_bool(p, "enabled"),
+    ),
+    "domains.venue.add": lambda p: add_venue(
+        domain_id=_payload_str(p, "domain_id"),
+        venue=_payload_dict(p, "venue"),
+    ),
+    "domains.venue.update": lambda p: update_venue(
+        domain_id=_payload_str(p, "domain_id"),
+        venue_name=_payload_str(p, "venue"),
+        patch=_payload_dict(p, "patch"),
+    ),
+    "domains.venue.remove": lambda p: remove_venue(
+        domain_id=_payload_str(p, "domain_id"),
+        venue_name=_payload_str(p, "venue"),
+    ),
+    "domains.tier_reset": lambda p: reset_domain_tiers(
+        domain_id=_payload_str(p, "domain_id"),
+    ),
+    "domains.create": lambda p: create_domain(
+        domain_id=_payload_str(p, "id"),
+        label=_payload_str(p, "label"),
+        aliases=p.get("aliases"),
+        arxiv_cats=p.get("arxiv_cats"),
+    ),
+    "domains.update": lambda p: update_domain(
+        domain_id=_payload_str(p, "domain_id"),
+        patch=_payload_dict(p, "patch"),
+    ),
+    "domains.delete": lambda p: delete_domain(
+        domain_id=_payload_str(p, "domain_id"),
+    ),
+    "domains.confirm": lambda p: set_domain_confirmed(
+        domain_id=_payload_str(p, "domain_id"),
+        confirmed=_payload_bool(p, "confirmed"),
+    ),
+}
+
+# Keyed by path, because that is what the dispatch chain has in hand. Built from
+# the action table so a path is written down exactly once.
+_DOMAINS_MUTATION_ACTIONS: dict[str, Callable[[dict[str, Any]], dict[str, Any]]] = {
+    _WEBUI_MUTATION_PATHS[action]: handler for action, handler in _DOMAINS_ACTIONS.items()
+}
+
+# Paths that are mutations but are not in `_WEBUI_MUTATION_PATHS` -- they are
+# reached by a regex or by the settings router instead. A path missing from
+# here still works over the WebSocket, but the same path over plain HTTP
+# returns 200 instead of 405, which is the CSRF-shaped hole this set closes.
+# Module level rather than inline so a test can assert the three registrations
+# agree; `tests/webui/test_domains_routes.py` does.
+_WEBUI_MUTATION_ONLY_PATHS = frozenset(
+    {
+        "/api/webui/skills/install",
+        "/api/webui/skills/update",
+        "/api/webui/skills/delete",
+        "/api/webui/sidebar-state/update",
+        "/api/webui/domains/venue/enabled",
+        "/api/webui/domains/venue/add",
+        "/api/webui/domains/venue/update",
+        "/api/webui/domains/venue/remove",
+        "/api/webui/domains/tier-reset",
+        "/api/webui/domains/create",
+        "/api/webui/domains/update",
+        "/api/webui/domains/delete",
+        "/api/webui/domains/confirm",
+        "/api/workspaces/pick-folder",
+    }
+)
 
 _WEBUI_CHANNEL_CONNECT_ACTIONS = {
     "settings.channel.connect.start": "start",
@@ -529,15 +648,7 @@ class GatewayHTTPHandler:
             return True
         if path in {"/api/webui/recovery/continue", "/api/webui/recovery/dismiss"}:
             return True
-        return path in {
-            "/api/webui/skills/install",
-            "/api/webui/skills/update",
-            "/api/webui/skills/delete",
-            "/api/webui/sidebar-state/update",
-            "/api/webui/domains/venue/enabled",
-            "/api/webui/domains/confirm",
-            "/api/workspaces/pick-folder",
-        }
+        return path in _WEBUI_MUTATION_ONLY_PATHS
 
     @staticmethod
     def _webui_mutation_path(
@@ -1467,10 +1578,9 @@ class GatewayHTTPHandler:
             return self._handle_webui_sidebar_state_update(request)
         if got == "/api/webui/domains":
             return self._handle_webui_domains(request)
-        if got == "/api/webui/domains/venue/enabled":
-            return self._handle_webui_domains_venue_enabled(request)
-        if got == "/api/webui/domains/confirm":
-            return self._handle_webui_domains_confirm(request)
+        domain_action = _DOMAINS_MUTATION_ACTIONS.get(got)
+        if domain_action is not None:
+            return self._handle_webui_domains_mutation(request, domain_action)
         return None
 
     def _handle_commands(self, request: WsRequest) -> Response:
@@ -1727,40 +1837,20 @@ class GatewayHTTPHandler:
             return _http_error(401, "Unauthorized")
         return self._domains_response(read_domains_registry)
 
-    def _handle_webui_domains_venue_enabled(self, request: WsRequest) -> Response:
-        if not self.check_api_token(request):
-            return _http_error(401, "Unauthorized")
-        payload = _mutation_payload(request) or {}
-        domain_id = payload.get("domain_id")
-        venue_name = payload.get("venue")
-        enabled = payload.get("enabled")
-        if not isinstance(domain_id, str) or not domain_id:
-            return _http_error(400, "domain_id must be a non-empty string")
-        if not isinstance(venue_name, str) or not venue_name:
-            return _http_error(400, "venue must be a non-empty string")
-        if not isinstance(enabled, bool):
-            return _http_error(400, "enabled must be a boolean")
-        return self._domains_response(
-            lambda: set_venue_enabled(
-                domain_id=domain_id,
-                venue_name=venue_name,
-                enabled=enabled,
-            )
-        )
+    def _handle_webui_domains_mutation(
+        self, request: WsRequest, action: Callable[[dict[str, Any]], dict[str, Any]]
+    ) -> Response:
+        """Run one registry edit.
 
-    def _handle_webui_domains_confirm(self, request: WsRequest) -> Response:
+        Every domains mutation route lands here rather than getting its own
+        handler, so the token check below cannot be forgotten on a new one --
+        there is no auth middleware behind this, and a handler that skipped it
+        would be an unauthenticated write endpoint.
+        """
         if not self.check_api_token(request):
             return _http_error(401, "Unauthorized")
         payload = _mutation_payload(request) or {}
-        domain_id = payload.get("domain_id")
-        confirmed = payload.get("confirmed")
-        if not isinstance(domain_id, str) or not domain_id:
-            return _http_error(400, "domain_id must be a non-empty string")
-        if not isinstance(confirmed, bool):
-            return _http_error(400, "confirmed must be a boolean")
-        return self._domains_response(
-            lambda: set_domain_confirmed(domain_id=domain_id, confirmed=confirmed)
-        )
+        return self._domains_response(lambda: action(payload))
 
     def _domains_response(self, action: Callable[[], dict[str, Any]]) -> Response:
         """Run one registry action and map its failures onto HTTP statuses.
