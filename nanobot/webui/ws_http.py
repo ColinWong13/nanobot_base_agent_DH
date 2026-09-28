@@ -1945,11 +1945,19 @@ class GatewayHTTPHandler:
         except ValueError:
             return _http_error(403, "Forbidden")
         if not candidate.is_file():
-            index = self.static_dist_path / "index.html"
-            if index.is_file():
-                candidate = index
+            # Extensionless pages: /home serves home.html. This is tried
+            # before the SPA fallback so a real page wins over the app shell,
+            # and only the .html suffix is tried -- guessing at any other
+            # extension would start answering paths the SPA owns.
+            page = candidate.with_name(f"{candidate.name}.html")
+            if page.is_file():
+                candidate = page
             else:
-                return None
+                index = self.static_dist_path / "index.html"
+                if index.is_file():
+                    candidate = index
+                else:
+                    return None
         ctype, _ = mimetypes.guess_type(candidate.name)
         if ctype is None:
             ctype = "application/octet-stream"
@@ -1973,7 +1981,11 @@ class GatewayHTTPHandler:
             return _http_error(500, "Internal Server Error")
         if utf8_text:
             ctype = f"{ctype}; charset=utf-8"
-        if candidate.name == "index.html":
+        # HTML is the entry point and is never content-hashed, so caching it
+        # immutably strands the user on a stale build with no way to reload
+        # past it. Everything else in dist is either hashed by the build or a
+        # static asset that only changes when the build does.
+        if candidate.suffix == ".html":
             cache = "no-cache"
         else:
             cache = "public, max-age=31536000, immutable"

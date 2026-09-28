@@ -1,0 +1,1021 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="PRA — personal research assistant" />
+    <meta name="theme-color" content="#FFFBFE" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#141218" media="(prefers-color-scheme: dark)" />
+    <title>PRA</title>
+    <link rel="icon" href="/brand/pra_mark.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/brand/pra_apple_touch.png" />
+
+    <!--
+      The landing page. Deliberately one self-contained file with no build
+      step and no network requests: it is the page that has to work when
+      something else does not, so it carries its own stylesheet rather than
+      depending on a hashed bundle it cannot name.
+
+      That means the tokens below are a copy of webui/src/globals.css rather
+      than an import. They are copied verbatim -- same HSL triplets, same
+      radius ladder, same elevation shadows -- so that a change over there is
+      a change here, and the two read as the same file. If you change a
+      colour in globals.css, change it here too; nothing enforces it.
+    -->
+
+    <script>
+      // Runs before first paint, for the same reason index.html does it here:
+      // resolve the theme ahead of the stylesheet or the page flashes the
+      // wrong one. Reads the app's own key so arriving from the app does not
+      // flip the lights. The key is "nanobot-webui.theme" and is not ours to
+      // rename -- renaming it silently resets everyone's theme choice.
+      try {
+        var stored = localStorage.getItem("nanobot-webui.theme");
+        var dark =
+          stored === "dark" ||
+          (stored !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle("dark", dark);
+      } catch (e) {
+        /* Private mode. The default light palette is a fine answer. */
+      }
+    </script>
+
+    <style>
+      :root {
+        color-scheme: light;
+
+        /* --- MD3 baseline purple, mirroring globals.css. --- */
+        --primary: 256 34% 48%;
+        --primary-foreground: 0 0% 100%;
+        --primary-container: 263 100% 93%;
+        --on-primary-container: 261 100% 18%;
+        --secondary: 263 65% 92%;
+        --tertiary: 340 21% 41%;
+
+        --background: 315 100% 99%;
+        --foreground: 255 7% 11%;
+
+        --surface-container-lowest: 0 0% 100%;
+        --surface-container-low: 278 44% 96%;
+        --surface-container: 276 38% 95%;
+        --surface-container-high: 276 25% 92%;
+
+        --on-surface-variant: 264 7% 29%;
+        --outline: 270 4% 47%;
+        --outline-variant: 270 11% 79%;
+
+        /* --- Shape. The MD3 ladder, not a single radius. --- */
+        --radius-compact: 0.5rem;
+        --radius-control: 0.75rem;
+        --radius-floating: 1rem;
+        --radius-panel: 1.5rem;
+        --radius-modal: 1.75rem;
+        --radius-prominent: 2rem;
+        --radius-pill: 9999px;
+
+        /* --- Elevation. The shadow colour is a token, which is what lets
+           one value work in both modes with no dark: override. --- */
+        --elevation-shadow: 260 30% 12%;
+        --elevation-1: 0 1px 2px hsl(var(--elevation-shadow) / 0.16),
+          0 1px 3px 1px hsl(var(--elevation-shadow) / 0.08);
+        --elevation-2: 0 1px 2px hsl(var(--elevation-shadow) / 0.16),
+          0 2px 6px 2px hsl(var(--elevation-shadow) / 0.08);
+        --elevation-3: 0 4px 8px 3px hsl(var(--elevation-shadow) / 0.08),
+          0 1px 3px hsl(var(--elevation-shadow) / 0.16);
+        --elevation-4: 0 6px 10px 4px hsl(var(--elevation-shadow) / 0.08),
+          0 2px 3px hsl(var(--elevation-shadow) / 0.16);
+
+        --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+        --ease-decelerate: cubic-bezier(0, 0, 0, 1);
+
+        --measure: 1120px;
+      }
+
+      .dark {
+        color-scheme: dark;
+        --primary: 258 100% 87%;
+        --primary-foreground: 259 58% 28%;
+        --primary-container: 257 43% 38%;
+        --on-primary-container: 263 100% 93%;
+        --secondary: 258 13% 31%;
+        --tertiary: 343 63% 83%;
+
+        --background: 260 14% 8%;
+        --foreground: 280 17% 90%;
+
+        --surface-container-lowest: 260 13% 10%;
+        --surface-container-low: 259 12% 12%;
+        --surface-container: 257 10% 14%;
+        --surface-container-high: 256 9% 17%;
+
+        --on-surface-variant: 270 11% 79%;
+        --outline: 264 5% 58%;
+        --outline-variant: 267 8% 30%;
+
+        --elevation-shadow: 0 0% 0%;
+        --elevation-1: 0 1px 2px hsl(var(--elevation-shadow) / 0.3),
+          0 1px 3px 1px hsl(var(--elevation-shadow) / 0.15);
+        --elevation-2: 0 1px 2px hsl(var(--elevation-shadow) / 0.3),
+          0 2px 6px 2px hsl(var(--elevation-shadow) / 0.15);
+        --elevation-3: 0 4px 8px 3px hsl(var(--elevation-shadow) / 0.15),
+          0 1px 3px hsl(var(--elevation-shadow) / 0.3);
+        --elevation-4: 0 6px 10px 4px hsl(var(--elevation-shadow) / 0.15),
+          0 2px 3px hsl(var(--elevation-shadow) / 0.3);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: hsl(var(--background));
+        color: hsl(var(--foreground));
+        font-family:
+          system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, "Noto Sans", "Noto Sans SC", "PingFang SC",
+          "Hiragino Sans GB", "Microsoft YaHei", sans-serif, "Apple Color Emoji",
+          "Segoe UI Emoji";
+        font-size: 16px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      /* MD3 line-height is looser for CJK than for Latin, and the app widens
+         it for the same reason. Without this the Chinese reads cramped
+         beside the English at the same size. */
+      html[lang^="zh"] body {
+        line-height: 1.8;
+      }
+
+      .wrap {
+        width: 100%;
+        max-width: var(--measure);
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* --- Ambient background. The app's own .ambient-shape recipe: pill
+         radius, 64px blur, a fraction of a role colour. --- */
+      .ambient {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 0;
+        /* The blobs bleed past the hero; fading the layer out keeps them
+           from cutting a hard horizontal line across the next section. */
+        -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+        mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+      }
+
+      .blob {
+        position: absolute;
+        border-radius: var(--radius-pill);
+        filter: blur(64px);
+      }
+
+      .blob-1 {
+        width: 46vw;
+        height: 46vw;
+        min-width: 320px;
+        min-height: 320px;
+        top: -14vw;
+        left: -10vw;
+        background: hsl(var(--primary) / 0.3);
+      }
+
+      .blob-2 {
+        width: 38vw;
+        height: 38vw;
+        min-width: 260px;
+        min-height: 260px;
+        top: -6vw;
+        right: -8vw;
+        background: hsl(var(--secondary) / 0.6);
+      }
+
+      .blob-3 {
+        width: 30vw;
+        height: 30vw;
+        min-width: 220px;
+        min-height: 220px;
+        top: 26vw;
+        left: 34%;
+        background: hsl(var(--tertiary) / 0.28);
+      }
+
+      /* Light-mode lavender pastels are already close to the background; the
+         dark-mode roles are far brighter, so the same alpha would glare. */
+      .dark .blob-1 {
+        background: hsl(var(--primary) / 0.16);
+      }
+      .dark .blob-2 {
+        background: hsl(var(--secondary) / 0.5);
+      }
+      .dark .blob-3 {
+        background: hsl(var(--tertiary) / 0.12);
+      }
+
+      /* --- Nav --- */
+      .nav {
+        position: relative;
+        z-index: 2;
+        padding: 20px 0;
+      }
+
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .nav-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: hsl(var(--foreground));
+        text-decoration: none;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        font-size: 1.05rem;
+      }
+
+      .nav-brand svg {
+        width: 28px;
+        height: 28px;
+        color: hsl(var(--primary));
+      }
+
+      .nav-links {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .nav-link {
+        display: none;
+        padding: 8px 14px;
+        border-radius: var(--radius-pill);
+        color: hsl(var(--on-surface-variant));
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: color 200ms var(--ease-standard);
+      }
+
+      .nav-link:hover {
+        color: hsl(var(--foreground));
+      }
+
+      @media (min-width: 720px) {
+        .nav-link {
+          display: inline-block;
+        }
+      }
+
+      /* --- Buttons. Pill at every size, per MD3, with the state layer as an
+         overlay of the *text* colour rather than a second background --
+         which is what lets one rule serve the filled and tonal variants. --- */
+      .btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 40px;
+        padding: 0 24px;
+        border: none;
+        border-radius: var(--radius-pill);
+        font: inherit;
+        font-size: 0.875rem;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        text-decoration: none;
+        cursor: pointer;
+        overflow: hidden;
+        isolation: isolate;
+        transition:
+          box-shadow 200ms var(--ease-standard),
+          transform 200ms var(--ease-standard);
+      }
+
+      .btn::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: currentColor;
+        opacity: 0;
+        transition: opacity 200ms var(--ease-standard);
+        z-index: -1;
+      }
+
+      .btn:hover::after {
+        opacity: 0.08;
+      }
+      .btn:focus-visible::after {
+        opacity: 0.12;
+      }
+      .btn:active::after {
+        opacity: 0.12;
+      }
+
+      .btn:focus-visible {
+        outline: 3px solid hsl(var(--primary) / 0.5);
+        outline-offset: 2px;
+      }
+
+      .btn:active {
+        transform: scale(0.97);
+      }
+
+      .btn-filled {
+        background: hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
+        box-shadow: var(--elevation-1);
+      }
+
+      .btn-filled:hover {
+        box-shadow: var(--elevation-2);
+      }
+
+      .btn-tonal {
+        background: hsl(var(--primary-container));
+        color: hsl(var(--on-primary-container));
+      }
+
+      .btn-lg {
+        height: 48px;
+        padding: 0 28px;
+        font-size: 0.9375rem;
+      }
+
+      /* --- Hero --- */
+      .hero {
+        position: relative;
+        z-index: 1;
+        padding: 72px 0 96px;
+        text-align: center;
+      }
+
+      @media (min-width: 720px) {
+        .hero {
+          padding: 104px 0 128px;
+        }
+      }
+
+      .mark {
+        width: 88px;
+        height: 88px;
+        color: hsl(var(--primary));
+        display: block;
+        margin: 0 auto 28px;
+        /* A slow drift, five seconds each way. It reads as breathing rather
+           than as a loading spinner, which is the difference between a page
+           that feels alive and one that looks stuck. */
+        animation: drift 9s var(--ease-standard) infinite;
+      }
+
+      @keyframes drift {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-9px) rotate(-2.5deg);
+        }
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(3.25rem, 12vw, 5.5rem);
+        line-height: 0.95;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        color: hsl(var(--foreground));
+      }
+
+      .brand-full {
+        margin: 14px 0 0;
+        font-size: clamp(0.9rem, 2.4vw, 1.0625rem);
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: hsl(var(--primary));
+      }
+
+      .pitch {
+        margin: 28px auto 0;
+        max-width: 34em;
+        font-size: clamp(1rem, 2.4vw, 1.1875rem);
+        color: hsl(var(--on-surface-variant));
+      }
+
+      .hero-actions {
+        margin-top: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+      }
+
+      /* --- Sections --- */
+      section {
+        position: relative;
+        z-index: 1;
+      }
+
+      .section {
+        padding: 8px 0 96px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: clamp(1.75rem, 4.4vw, 2.5rem);
+        line-height: 1.2;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      .section-lead {
+        margin: 12px 0 0;
+        max-width: 32em;
+        color: hsl(var(--on-surface-variant));
+        font-size: 1.0625rem;
+      }
+
+      .section-head {
+        margin-bottom: 40px;
+      }
+
+      /* --- Feature cards. Tonal surfaces separated by a colour step rather
+         than by a border, which is the MD3 answer to "how do I draw a card
+         without a box". --- */
+      .cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      @media (min-width: 640px) {
+        .cards {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (min-width: 960px) {
+        .cards {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      .card {
+        padding: 28px 24px;
+        border-radius: var(--radius-panel);
+        background: hsl(var(--surface-container-low));
+        border: 1px solid hsl(var(--outline-variant) / 0.5);
+        transition:
+          background 250ms var(--ease-standard),
+          box-shadow 250ms var(--ease-standard),
+          transform 250ms var(--ease-standard);
+      }
+
+      .card:hover {
+        background: hsl(var(--surface-container));
+        box-shadow: var(--elevation-2);
+        transform: translateY(-3px);
+      }
+
+      .card-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 20px;
+        border-radius: var(--radius-floating);
+        background: hsl(var(--primary-container));
+        color: hsl(var(--on-primary-container));
+      }
+
+      .card-icon svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      h3 {
+        margin: 0 0 8px;
+        font-size: 1.0625rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .card p {
+        margin: 0;
+        font-size: 0.9375rem;
+        color: hsl(var(--on-surface-variant));
+      }
+
+      /* --- Channel chips --- */
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 28px;
+      }
+
+      .chip {
+        display: inline-block;
+        padding: 7px 16px;
+        border-radius: var(--radius-compact);
+        border: 1px solid hsl(var(--outline));
+        color: hsl(var(--on-surface-variant));
+        font-size: 0.8125rem;
+        font-weight: 500;
+        transition:
+          background 200ms var(--ease-standard),
+          border-color 200ms var(--ease-standard),
+          color 200ms var(--ease-standard);
+      }
+
+      .chip:hover {
+        background: hsl(var(--secondary));
+        border-color: transparent;
+        color: hsl(var(--foreground));
+      }
+
+      /* --- Closing --- */
+      .closing {
+        position: relative;
+        z-index: 1;
+        padding: 56px 40px;
+        border-radius: var(--radius-prominent);
+        background: hsl(var(--surface-container));
+        text-align: center;
+      }
+
+      @media (max-width: 520px) {
+        .closing {
+          padding: 44px 22px;
+        }
+      }
+
+      .closing h2 {
+        margin-bottom: 10px;
+      }
+
+      .closing p {
+        margin: 0 auto 32px;
+        max-width: 30em;
+        color: hsl(var(--on-surface-variant));
+      }
+
+      /* --- Footer --- */
+      footer {
+        position: relative;
+        z-index: 1;
+        margin-top: 96px;
+        padding: 32px 0 48px;
+        border-top: 1px solid hsl(var(--outline-variant) / 0.6);
+      }
+
+      .footer-inner {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px 24px;
+        font-size: 0.875rem;
+        color: hsl(var(--on-surface-variant));
+      }
+
+      .footer-inner a {
+        color: hsl(var(--on-surface-variant));
+        text-decoration: none;
+        transition: color 200ms var(--ease-standard);
+      }
+
+      .footer-inner a:hover {
+        color: hsl(var(--primary));
+        text-decoration: underline;
+      }
+
+      .footer-spacer {
+        margin-left: auto;
+      }
+
+      /* --- Reveal on scroll. Kept as an enhancement: without JS every
+         element is already visible, so nothing depends on it firing. --- */
+      .reveal {
+        opacity: 1;
+      }
+
+      .js .reveal {
+        opacity: 0;
+        transform: translateY(16px);
+        transition:
+          opacity 600ms var(--ease-decelerate),
+          transform 600ms var(--ease-decelerate);
+      }
+
+      .js .reveal.in {
+        opacity: 1;
+        transform: none;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        .mark {
+          animation: none;
+        }
+
+        .js .reveal,
+        .js .reveal.in {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+
+        .card:hover,
+        .btn:active {
+          transform: none;
+        }
+
+        .btn,
+        .btn::after,
+        .card,
+        .chip,
+        .footer-inner a {
+          transition: none;
+        }
+      }
+
+      .skip {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        z-index: 10;
+        padding: 12px 20px;
+        border-radius: 0 0 var(--radius-control) 0;
+        background: hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
+        text-decoration: none;
+        font-size: 0.875rem;
+      }
+
+      .skip:focus {
+        left: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="nav-brand" href="/home">
+          <svg viewBox="0 0 50 50" fill="currentColor" aria-hidden="true" focusable="false">
+            <g transform="translate(-3.572,-1)">
+              <path
+                d="M16 5C21 11 26 15 32 16C41.5 17.5 47 24.5 47 33C47 41 40 47 31 47C21 47 12.5 40 10.5 30C9 21 12.5 11 16 5Z"
+              />
+            </g>
+          </svg>
+          <span>PRA</span>
+        </a>
+        <nav class="nav-links">
+          <a class="nav-link" href="#features" data-i18n="navFeatures">Features</a>
+          <a class="nav-link" href="#channels" data-i18n="navChannels">Channels</a>
+          <a class="btn btn-filled" href="/" data-i18n="ctaOpen">Open PRA</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero">
+        <div class="ambient" aria-hidden="true">
+          <div class="blob blob-1"></div>
+          <div class="blob blob-2"></div>
+          <div class="blob blob-3"></div>
+        </div>
+
+        <div class="wrap">
+          <svg
+            class="mark"
+            viewBox="0 0 50 50"
+            fill="currentColor"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <g transform="translate(-3.572,-1)">
+              <path
+                d="M16 5C21 11 26 15 32 16C41.5 17.5 47 24.5 47 33C47 41 40 47 31 47C21 47 12.5 40 10.5 30C9 21 12.5 11 16 5Z"
+              />
+            </g>
+          </svg>
+
+          <h1>PRA</h1>
+          <p class="brand-full" data-i18n="brandFull">personal research assistant</p>
+          <p class="pitch" data-i18n="pitch">
+            Your own research assistant. It runs on your machine, lives in the chat apps you
+            already use, and turns scattered reading into something you can actually search.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-filled btn-lg" href="/" data-i18n="heroPrimary">Open PRA</a>
+            <a class="btn btn-tonal btn-lg" href="#features" data-i18n="heroSecondary">
+              See what it does
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="features">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <h2 data-i18n="featuresTitle">What it does</h2>
+            <p class="section-lead" data-i18n="featuresLead">
+              Six things it takes off your desk.
+            </p>
+          </div>
+
+          <div class="cards">
+            <article class="card reveal">
+              <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.6 9.6 0 0 1-3.3-.6L3 21l1.8-5.1A8.2 8.2 0 0 1 4 11.5 8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5Z" />
+                </svg>
+              </span>
+              <h3 data-i18n="f1t">Lives where you already talk</h3>
+              <p data-i18n="f1b">
+                Telegram, Discord, Slack, Feishu, WeChat, DingTalk, email — no new app to open.
+                Wherever you already type, it answers.
+              </p>
+            </article>
+
+            <article class="card reveal">
+              <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H10a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4Z" />
+                  <path d="M20 4.5A1.5 1.5 0 0 0 18.5 3H14a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6Z" />
+                </svg>
+              </span>
+              <h3 data-i18n="f2t">Reads your library</h3>
+              <p data-i18n="f2b">
+                Point it at your Obsidian vault. Papers, notes and clippings get indexed where
+                they sit, without moving a file.
+              </p>
+            </article>
+
+            <article class="card reveal">
+              <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="5" r="2.4" />
+                  <circle cx="5" cy="18" r="2.4" />
+                  <circle cx="19" cy="18" r="2.4" />
+                  <path d="M10.6 7 6.4 15.8M13.4 7l4.2 8.8M7.4 18h9.2" />
+                </svg>
+              </span>
+              <h3 data-i18n="f3t">A map that grows</h3>
+              <p data-i18n="f3b">
+                Every source you add links its topics, methods and authors to what came before.
+                The more you read, the clearer the shape of the field gets.
+              </p>
+            </article>
+
+            <article class="card reveal">
+              <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3v3M12 18v3M4.2 7.5l2.6 1.5M17.2 15l2.6 1.5M4.2 16.5l2.6-1.5M17.2 9l2.6-1.5" />
+                  <circle cx="12" cy="12" r="3.2" />
+                </svg>
+              </span>
+              <h3 data-i18n="f4t">Skills you can add</h3>
+              <p data-i18n="f4b">
+                arXiv, OpenAlex, image generation, your own scripts. If something is missing,
+                write a skill and install it.
+              </p>
+            </article>
+
+            <article class="card reveal">
+              <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="8.5" />
+                  <path d="M12 7.2V12l3.2 2" />
+                </svg>
+              </span>
+              <h3 data-i18n="f5t">Works while you sleep</h3>
+              <p data-i18n="f5b">
+                Scheduled jobs and automations keep collecting what you told them to collect,
+                and have it waiting.
+              </p>
+            </article>
+
+            <article class="card reveal">
+              <span class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 7h14M5 12h14M5 17h14" />
+                  <circle cx="9" cy="7" r="1.9" fill="currentColor" stroke="none" />
+                  <circle cx="15" cy="12" r="1.9" fill="currentColor" stroke="none" />
+                  <circle cx="8" cy="17" r="1.9" fill="currentColor" stroke="none" />
+                </svg>
+              </span>
+              <h3 data-i18n="f6t">Any model you like</h3>
+              <p data-i18n="f6b">
+                Switch providers from settings — whichever model fits the job, or the one you
+                already pay for.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="channels">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <h2 data-i18n="channelsTitle">Wired into</h2>
+            <p class="section-lead" data-i18n="channelsLead">
+              Fifteen chat platforms, plus an OpenAI-compatible API for everything else.
+            </p>
+          </div>
+
+          <!-- Proper nouns, so they stay untranslated in every locale. -->
+          <div class="chips reveal">
+            <span class="chip">Telegram</span>
+            <span class="chip">Discord</span>
+            <span class="chip">Slack</span>
+            <span class="chip">飞书</span>
+            <span class="chip">企业微信</span>
+            <span class="chip">微信</span>
+            <span class="chip">钉钉</span>
+            <span class="chip">QQ</span>
+            <span class="chip">Matrix</span>
+            <span class="chip">WhatsApp</span>
+            <span class="chip">MS Teams</span>
+            <span class="chip">Mattermost</span>
+            <span class="chip">MoChat</span>
+            <span class="chip">Email</span>
+            <span class="chip">OpenAI API</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <div class="closing reveal">
+            <h2 data-i18n="closingTitle">Ready when you are.</h2>
+            <p data-i18n="closingBody">PRA is already running on this machine.</p>
+            <a class="btn btn-filled btn-lg" href="/" data-i18n="heroPrimary">Open PRA</a>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div class="wrap footer-inner">
+          <span>PRA · <span data-i18n="footerNote">personal research assistant</span></span>
+          <span class="footer-spacer"></span>
+          <a
+            href="https://github.com/ColinWong13/nanobot_base_agent_DH"
+            target="_blank"
+            rel="noreferrer noopener"
+            data-i18n="footerSource"
+            >Source</a
+          >
+        </div>
+      </footer>
+    </main>
+
+    <script>
+      (function () {
+        document.documentElement.classList.add("js");
+
+        // Two locales, not ten. The app ships ten because its strings are
+        // short and already translated; this page is prose, and inventing
+        // marketing copy in eight languages nobody here can proofread would
+        // be worse than falling back to English. zh-TW is included because
+        // it is a conversion of zh-CN rather than a translation.
+        var COPY = {
+          en: {},
+          "zh-CN": {
+            skip: "跳到正文",
+            navFeatures: "功能",
+            navChannels: "接入",
+            ctaOpen: "进入 PRA",
+            brandFull: "个人研究助理",
+            pitch:
+              "你自己的研究助理。跑在你自己的机器上，住进你平时就在用的聊天软件，把散落各处的材料连成一张查得动的网。",
+            heroPrimary: "进入 PRA",
+            heroSecondary: "看看能做什么",
+            featuresTitle: "它能做什么",
+            featuresLead: "六件可以不用你亲手做的事。",
+            f1t: "住在你说话的地方",
+            f1b: "Telegram、Discord、Slack、飞书、微信、钉钉、邮件 —— 不用再开一个新应用。你平时在哪儿打字，它就在哪儿回你。",
+            f2t: "读得懂你的资料库",
+            f2b: "指向你的 Obsidian 仓库就行。论文、笔记、剪藏就地建索引，一个文件都不用挪。",
+            f3t: "一张会长大的地图",
+            f3b: "每加一份材料，里面的主题、方法和作者就跟之前读过的东西连上。读得越多，这个领域的形状越清楚。",
+            f4t: "技能可以自己加",
+            f4b: "arXiv、OpenAlex、图片生成、你自己的脚本。缺什么，写一个装上就行。",
+            f5t: "你睡了它还在跑",
+            f5b: "定时任务和自动化按你交代的节奏把东西收回来，等你打开就已经在了。",
+            f6t: "模型随你换",
+            f6b: "在设置里换提供商 —— 哪个模型适合这件事就用哪个，或者用你已经在付费的那个。",
+            channelsTitle: "接进这些地方",
+            channelsLead: "十五个聊天平台，外加一个 OpenAI 兼容接口，接剩下的。",
+            closingTitle: "随时可以开始。",
+            closingBody: "PRA 已经在这台机器上跑着了。",
+            footerNote: "个人研究助理",
+            footerSource: "源代码"
+          },
+          "zh-TW": {
+            skip: "跳到正文",
+            navFeatures: "功能",
+            navChannels: "接入",
+            ctaOpen: "進入 PRA",
+            brandFull: "個人研究助理",
+            pitch:
+              "你自己的研究助理。跑在你自己的機器上，住進你平時就在用的聊天軟體，把散落各處的材料連成一張查得動的網。",
+            heroPrimary: "進入 PRA",
+            heroSecondary: "看看它能做什麼",
+            featuresTitle: "它能做什麼",
+            featuresLead: "六件可以不用你親手做的事。",
+            f1t: "住在你說話的地方",
+            f1b: "Telegram、Discord、Slack、飛書、微信、釘釘、郵件 —— 不用再開一個新應用。你平時在哪裡打字，它就在哪裡回你。",
+            f2t: "讀得懂你的資料庫",
+            f2b: "指向你的 Obsidian 倉庫就行。論文、筆記、剪藏就地建索引，一個檔案都不用搬。",
+            f3t: "一張會長大的地圖",
+            f3b: "每加一份材料，裡面的主題、方法和作者就跟之前讀過的東西連上。讀得越多，這個領域的形狀越清楚。",
+            f4t: "技能可以自己加",
+            f4b: "arXiv、OpenAlex、圖片生成、你自己的腳本。缺什麼，寫一個裝上就行。",
+            f5t: "你睡了它還在跑",
+            f5b: "定時任務和自動化按你交代的節奏把東西收回來，等你打開就已經在了。",
+            f6t: "模型隨你換",
+            f6b: "在設定裡換供應商 —— 哪個模型適合這件事就用哪個，或者用你已經在付費的那個。",
+            channelsTitle: "接進這些地方",
+            channelsLead: "十五個聊天平台，外加一個 OpenAI 相容介面，接剩下的。",
+            closingTitle: "隨時可以開始。",
+            closingBody: "PRA 已經在這台機器上跑著了。",
+            footerNote: "個人研究助理",
+            footerSource: "原始碼"
+          }
+        };
+
+        var locale = "en";
+        try {
+          var stored = localStorage.getItem("nanobot.locale");
+          // Exact match only. A stored "zh-Hans" or "pt-PT" is not a locale
+          // this page has, and guessing at the relationship between tags is
+          // how you end up showing Simplified to a Traditional reader.
+          if (stored && Object.prototype.hasOwnProperty.call(COPY, stored)) locale = stored;
+        } catch (e) {
+          /* Private mode; English is the documented fallback. */
+        }
+
+        var table = COPY[locale];
+        document.documentElement.lang = locale === "en" ? "en" : locale;
+        if (locale !== "en") {
+          var nodes = document.querySelectorAll("[data-i18n]");
+          for (var i = 0; i < nodes.length; i++) {
+            var key = nodes[i].getAttribute("data-i18n");
+            if (table[key]) nodes[i].textContent = table[key];
+          }
+        }
+
+        var targets = document.querySelectorAll(".reveal");
+        var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (reduced || !("IntersectionObserver" in window)) {
+          for (var j = 0; j < targets.length; j++) targets[j].classList.add("in");
+        } else {
+          var observer = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add("in");
+                observer.unobserve(entry.target);
+              });
+            },
+            { rootMargin: "0px 0px -8% 0px" }
+          );
+          for (var k = 0; k < targets.length; k++) observer.observe(targets[k]);
+        }
+      })();
+    </script>
+  </body>
+</html>

@@ -69,6 +69,7 @@
   "sidebar": {
     "resize": "Redimensionner la barre latérale",
     "navigation": "Navigation de la barre latérale",
+    "home": "Page d'accueil",
     "collapse": "Réduire la barre latérale",
     "newChat": "Nouveau sujet",
     "searchAria": "Rechercher",

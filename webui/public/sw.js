@@ -224,7 +224,14 @@ self.addEventListener("fetch", (event) => {
         // yields to the event loop.
         const cachedResponse = response.clone();
         const cache = await caches.open(CACHE_NAME);
-        await cache.put(isNavigation ? "/" : request, cachedResponse);
+        // Navigations are filed under the app shell key so the offline
+        // fallback has something to serve for any deep link. Only the root
+        // navigation *is* the shell, though -- /home is a different page, and
+        // storing it under "/" would make the app open as the landing page
+        // the next time the user is offline. Until /home existed every
+        // navigation was the root one, so the two cases never came apart.
+        const cacheKey = isNavigation && path === "/" ? "/" : request;
+        await cache.put(cacheKey, cachedResponse);
         // Refresh the complete build graph before pruning. A deployment can
         // change index.html without changing sw.js, so this cannot rely only
         // on the manifest cached when the worker was installed.

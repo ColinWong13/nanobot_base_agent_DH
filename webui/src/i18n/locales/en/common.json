@@ -69,6 +69,7 @@
   "sidebar": {
     "resize": "Resize sidebar",
     "navigation": "Sidebar navigation",
+    "home": "Home page",
     "collapse": "Collapse sidebar",
     "newChat": "New topic",
     "searchAria": "Search",

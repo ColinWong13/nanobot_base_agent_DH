@@ -69,6 +69,7 @@
   "sidebar": {
     "resize": "Cambiar el ancho de la barra lateral",
     "navigation": "Navegación de la barra lateral",
+    "home": "Página de inicio",
     "collapse": "Contraer barra lateral",
     "newChat": "Nuevo tema",
     "searchAria": "Buscar",

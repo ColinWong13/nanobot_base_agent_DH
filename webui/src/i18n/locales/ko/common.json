@@ -69,6 +69,7 @@
   "sidebar": {
     "resize": "사이드바 너비 조절",
     "navigation": "사이드바 탐색",
+    "home": "홈 페이지",
     "collapse": "사이드바 접기",
     "newChat": "새 주제",
     "searchAria": "검색",

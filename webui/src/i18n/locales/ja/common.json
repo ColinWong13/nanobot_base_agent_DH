@@ -69,6 +69,7 @@
   "sidebar": {
     "resize": "サイドバーの幅を変更",
     "navigation": "サイドバーのナビゲーション",
+    "home": "ホームページ",
     "collapse": "サイドバーを閉じる",
     "newChat": "新しいトピック",
     "searchAria": "検索",

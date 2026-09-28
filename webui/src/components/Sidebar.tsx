@@ -127,6 +127,12 @@ export function Sidebar(props: SidebarProps) {
     useState<HTMLElement | null>(null);
   const collapsed = Boolean(props.collapsed);
   const toggleLabel = t("thread.header.toggleSidebar");
+  const homeLabel = t("sidebar.home");
+  // Shared by the button and the link the mark becomes. Kept in one place so
+  // the two states cannot drift apart in size or alignment, which is exactly
+  // what would happen if each carried its own copy.
+  const brandMarkClassName =
+    "host-no-drag flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors";
   const apple = isApplePlatform();
   const activeActionRef = useRef<HTMLButtonElement>(null);
   const activeActionId = collapsed && props.newChatActive
@@ -179,28 +185,46 @@ export function Sidebar(props: SidebarProps) {
           collapsed ? "w-14 justify-start px-3" : "justify-between ps-4 pe-2",
         )}
       >
-        <button
-          data-testid="sidebar-brand-mark"
-          type="button"
-          aria-label={collapsed ? toggleLabel : undefined}
-          aria-hidden={collapsed ? undefined : true}
-          title={collapsed ? toggleLabel : undefined}
-          onClick={collapsed ? props.onExpand : undefined}
-          tabIndex={collapsed ? 0 : -1}
-          className={cn(
-            "host-no-drag flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors",
-            props.hostChromeInset && "mt-5",
-            collapsed
-              ? "hover:bg-sidebar-accent/60"
-              : "pointer-events-none",
-          )}
-        >
-          {/* Inline rather than the static file so the droplet takes
-              --primary: the mark and the accent colour then move together,
-              in both themes, with nothing to keep in step by hand. The
-              button above carries the label, so the mark stays decorative. */}
-          <BrandMark className="h-8 w-8 text-primary" />
-        </button>
+        {/* Inline rather than the static file so the droplet takes
+            --primary: the mark and the accent colour then move together, in
+            both themes, with nothing to keep in step by hand.
+
+            The mark changes element with the rail. Open, it is a link out to
+            the landing page. Collapsed, it stays the expand button, because
+            it is the only control that reopens the rail and a sidebar you
+            cannot get back is worse than one extra step to reach /home. A
+            single element carrying both meanings would have to disagree with
+            itself about what a click does, so it is two. */}
+        {collapsed ? (
+          <button
+            data-testid="sidebar-brand-mark"
+            type="button"
+            aria-label={toggleLabel}
+            title={toggleLabel}
+            onClick={props.onExpand}
+            className={cn(
+              brandMarkClassName,
+              props.hostChromeInset && "mt-5",
+              "hover:bg-sidebar-accent/60",
+            )}
+          >
+            <BrandMark className="h-8 w-8 text-primary" />
+          </button>
+        ) : (
+          <a
+            data-testid="sidebar-brand-mark"
+            href="/home"
+            aria-label={homeLabel}
+            title={homeLabel}
+            className={cn(
+              brandMarkClassName,
+              props.hostChromeInset && "mt-5",
+              "hover:bg-sidebar-accent/60",
+            )}
+          >
+            <BrandMark className="h-8 w-8 text-primary" />
+          </a>
+        )}
         {!collapsed && (
           <div className={cn("flex min-w-0 flex-1 items-center justify-end gap-1", props.hostChromeInset && "mt-5")}>
             {searchButton}

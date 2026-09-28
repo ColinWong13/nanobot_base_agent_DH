@@ -69,6 +69,7 @@
   "sidebar": {
     "resize": "Redimensionar a barra lateral",
     "navigation": "Navegação da barra lateral",
+    "home": "Página inicial",
     "collapse": "Recolher barra lateral",
     "newChat": "Novo tópico",
     "searchAria": "Buscar",
