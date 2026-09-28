@@ -346,7 +346,16 @@ export interface DomainVenue {
   tier?: string | null;
   type?: string | null;
   enabled?: boolean;
+  /** `ccf-2026` / `ft50/utd24` on a generated row, `user` on a hand-added one. */
   origin?: string | null;
+  full_name?: string | null;
+  area?: string | null;
+  issn?: string | null;
+  /**
+   * What the venue's source ranks it this run. Absent on a hand-added venue —
+   * nothing ranked it, so there is no source tier to restore it to.
+   */
+  base_tier?: string | null;
 }
 
 export interface DomainEntry {
@@ -354,12 +363,22 @@ export interface DomainEntry {
   label: string;
   aliases: string[];
   arxiv_cats: string[];
-  /** False means a rebuild resets this domain's venue toggles. */
+  /** Records that the list was read. A rebuild no longer consults it. */
   confirmed: boolean;
   updated_at: string | null;
   venue_count: number;
   enabled_count: number;
   venues: DomainVenue[];
+  /**
+   * Where this domain is regenerated from, or `user` for a hand-made one. A
+   * `user` domain has no upstream, so there is nothing to restore its tiers to
+   * and the page hides that action.
+   */
+  origin?: string | null;
+  /** Venues whose tier differs from their source. Zero disables the restore. */
+  tier_override_count: number;
+  /** Everything a rebuild has to carry for this domain, for the page to show. */
+  manual_edit_count: number;
 }
 
 export interface DomainsPayload {

@@ -8,6 +8,7 @@ import type {
   ChatSummary,
   CliAppsPayload,
   DomainsPayload,
+  DomainVenue,
   FilePreviewPayload,
   ImageGenerationSettingsUpdate,
   McpPresetsPayload,
@@ -419,9 +420,9 @@ export async function fetchDomains(
 }
 
 /**
- * Both registry mutations answer with the whole updated registry, so the caller
- * replaces its state instead of patching the row it just touched — the counts
- * and the `updated_at` stamp on the domain change too.
+ * Every registry mutation answers with the whole updated registry, so the
+ * caller replaces its state instead of patching the row it just touched — the
+ * counts and the `updated_at` stamp on the domain change too.
  */
 export async function setDomainVenueEnabled(
   transport: WebUIMutationTransport,
@@ -444,6 +445,103 @@ export async function setDomainConfirmed(
   return mutation<DomainsPayload>(transport, "domains.confirm", {
     domain_id: domainId,
     confirmed,
+  });
+}
+
+export async function addDomainVenue(
+  transport: WebUIMutationTransport,
+  domainId: string,
+  venue: DomainVenue,
+): Promise<DomainsPayload> {
+  return mutation<DomainsPayload>(transport, "domains.venue.add", {
+    domain_id: domainId,
+    venue,
+  });
+}
+
+/**
+ * Mirrors `_PATCHABLE_VENUE_FIELDS`, plus `new_name`. The identity fields are
+ * not patchable: `origin` says whether a rebuild keeps the row at all, and
+ * `base_tier` is the source's answer, not the user's.
+ */
+export type VenuePatch = Partial<Omit<DomainVenue, "name" | "origin" | "base_tier">> & {
+  /** Renames the row; the tier-override ledger follows it. */
+  new_name?: string;
+};
+
+export async function updateDomainVenue(
+  transport: WebUIMutationTransport,
+  domainId: string,
+  venue: string,
+  patch: VenuePatch,
+): Promise<DomainsPayload> {
+  return mutation<DomainsPayload>(transport, "domains.venue.update", {
+    domain_id: domainId,
+    venue,
+    patch,
+  });
+}
+
+export async function removeDomainVenue(
+  transport: WebUIMutationTransport,
+  domainId: string,
+  venue: string,
+): Promise<DomainsPayload> {
+  return mutation<DomainsPayload>(transport, "domains.venue.remove", {
+    domain_id: domainId,
+    venue,
+  });
+}
+
+/** Undo every tier edit in one domain, restoring what its source ranks them. */
+export async function resetDomainTiers(
+  transport: WebUIMutationTransport,
+  domainId: string,
+): Promise<DomainsPayload> {
+  return mutation<DomainsPayload>(transport, "domains.tier_reset", {
+    domain_id: domainId,
+  });
+}
+
+export async function createDomain(
+  transport: WebUIMutationTransport,
+  id: string,
+  label: string,
+  aliases: string[] = [],
+  arxivCats: string[] = [],
+): Promise<DomainsPayload> {
+  return mutation<DomainsPayload>(transport, "domains.create", {
+    id,
+    label,
+    aliases,
+    arxiv_cats: arxivCats,
+  });
+}
+
+/** Mirrors `_PATCHABLE_DOMAIN_FIELDS` — anything else the backend refuses. */
+export type DomainPatch = {
+  label?: string;
+  aliases?: string[];
+  arxiv_cats?: string[];
+};
+
+export async function updateDomain(
+  transport: WebUIMutationTransport,
+  domainId: string,
+  patch: DomainPatch,
+): Promise<DomainsPayload> {
+  return mutation<DomainsPayload>(transport, "domains.update", {
+    domain_id: domainId,
+    patch,
+  });
+}
+
+export async function deleteDomain(
+  transport: WebUIMutationTransport,
+  domainId: string,
+): Promise<DomainsPayload> {
+  return mutation<DomainsPayload>(transport, "domains.delete", {
+    domain_id: domainId,
   });
 }
 
