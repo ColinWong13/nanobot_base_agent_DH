@@ -499,14 +499,26 @@ class CronService:
             self._timer_task = None
 
     def _recompute_next_runs(self) -> None:
-        """Recompute next run times for all enabled jobs."""
+        """Give a next run time only to jobs that have none.
+
+        An existing ``next_run_at_ms`` -- including one already in the past -- is
+        left alone. Overwriting it unconditionally pushed every job to its next
+        *future* occurrence, so a gateway restart landing after a job's slot
+        silently skipped that occurrence: the due check in the tick is
+        ``now >= next_run_at_ms``, so a past value fires once on the next tick,
+        which is exactly what a sleeping process already does when it wakes past
+        a deadline. Recomputing here made restart and sleep disagree, and only
+        restart lost work.
+
+        Jobs with no time at all still need one, or they would never run.
+        """
         if not self._store:
             return
         now = _now_ms()
         for job in self._store.jobs:
             if self._enforce_agent_binding(job):
                 continue
-            if job.enabled:
+            if job.enabled and job.state.next_run_at_ms is None:
                 job.state.next_run_at_ms = _compute_next_run(job.schedule, now)
 
     def _get_next_wake_ms(self) -> int | None:
