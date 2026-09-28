@@ -37,6 +37,12 @@ from nanobot.session.session_handles import (
 )
 from nanobot.triggers.local_types import LocalTrigger
 from nanobot.webui.automation_results import cron_run_response, trigger_run_response
+from nanobot.webui.domains_api import (
+    domains_registry_path,
+    read_domains_registry,
+    set_domain_confirmed,
+    set_venue_enabled,
+)
 from nanobot.webui.file_preview import (
     WebUIFilePreviewError,
     file_preview_availability_payload,
@@ -174,6 +180,8 @@ _WEBUI_MUTATION_PATHS = {
     "skill.update": "/api/webui/skills/update",
     "skill.delete": "/api/webui/skills/delete",
     "sidebar.update": "/api/webui/sidebar-state/update",
+    "domains.venue.set_enabled": "/api/webui/domains/venue/enabled",
+    "domains.confirm": "/api/webui/domains/confirm",
     "workspace.pick_folder": "/api/workspaces/pick-folder",
     "recovery.continue": "/api/webui/recovery/continue",
     "recovery.dismiss": "/api/webui/recovery/dismiss",
@@ -526,6 +534,8 @@ class GatewayHTTPHandler:
             "/api/webui/skills/update",
             "/api/webui/skills/delete",
             "/api/webui/sidebar-state/update",
+            "/api/webui/domains/venue/enabled",
+            "/api/webui/domains/confirm",
             "/api/workspaces/pick-folder",
         }
 
@@ -1455,6 +1465,12 @@ class GatewayHTTPHandler:
             return self._handle_webui_sidebar_state(request)
         if got == "/api/webui/sidebar-state/update":
             return self._handle_webui_sidebar_state_update(request)
+        if got == "/api/webui/domains":
+            return self._handle_webui_domains(request)
+        if got == "/api/webui/domains/venue/enabled":
+            return self._handle_webui_domains_venue_enabled(request)
+        if got == "/api/webui/domains/confirm":
+            return self._handle_webui_domains_confirm(request)
         return None
 
     def _handle_commands(self, request: WsRequest) -> Response:
@@ -1705,6 +1721,68 @@ class GatewayHTTPHandler:
             self._log.exception("failed to write webui sidebar state")
             return _http_error(500, "failed to write sidebar state")
         return _http_json_response(state)
+
+    def _handle_webui_domains(self, request: WsRequest) -> Response:
+        if not self.check_api_token(request):
+            return _http_error(401, "Unauthorized")
+        return self._domains_response(read_domains_registry)
+
+    def _handle_webui_domains_venue_enabled(self, request: WsRequest) -> Response:
+        if not self.check_api_token(request):
+            return _http_error(401, "Unauthorized")
+        payload = _mutation_payload(request) or {}
+        domain_id = payload.get("domain_id")
+        venue_name = payload.get("venue")
+        enabled = payload.get("enabled")
+        if not isinstance(domain_id, str) or not domain_id:
+            return _http_error(400, "domain_id must be a non-empty string")
+        if not isinstance(venue_name, str) or not venue_name:
+            return _http_error(400, "venue must be a non-empty string")
+        if not isinstance(enabled, bool):
+            return _http_error(400, "enabled must be a boolean")
+        return self._domains_response(
+            lambda: set_venue_enabled(
+                domain_id=domain_id,
+                venue_name=venue_name,
+                enabled=enabled,
+            )
+        )
+
+    def _handle_webui_domains_confirm(self, request: WsRequest) -> Response:
+        if not self.check_api_token(request):
+            return _http_error(401, "Unauthorized")
+        payload = _mutation_payload(request) or {}
+        domain_id = payload.get("domain_id")
+        confirmed = payload.get("confirmed")
+        if not isinstance(domain_id, str) or not domain_id:
+            return _http_error(400, "domain_id must be a non-empty string")
+        if not isinstance(confirmed, bool):
+            return _http_error(400, "confirmed must be a boolean")
+        return self._domains_response(
+            lambda: set_domain_confirmed(domain_id=domain_id, confirmed=confirmed)
+        )
+
+    def _domains_response(self, action: Callable[[], dict[str, Any]]) -> Response:
+        """Run one registry action and map its failures onto HTTP statuses.
+
+        A registry that has never been built is a 404 rather than a 500: it is a
+        setup step the user can take, and the message names the command.
+        """
+        try:
+            return _http_json_response(action())
+        except FileNotFoundError:
+            # Name the path from the module rather than the exception: a
+            # FileNotFoundError built from a Path leaves `.filename` as None.
+            return _http_error(
+                404,
+                f"no venue registry at {domains_registry_path()}; "
+                "build one with skills/venue-registry/scripts/build_registry.py",
+            )
+        except ValueError as e:
+            return _http_error(400, str(e))
+        except OSError:
+            self._log.exception("failed to read or write the venue registry")
+            return _http_error(500, "failed to access the venue registry")
 
     # -- Static file serving ------------------------------------------------
 

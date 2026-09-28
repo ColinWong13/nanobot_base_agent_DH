@@ -4185,3 +4185,148 @@ def test_bootstrap_secret_also_enforced_on_localhost(bus: MagicMock) -> None:
     channel = _ch(bus, host="0.0.0.0", tokenIssueSecret="s3cret")
     resp = channel.gateway.http._handle_bootstrap(_LOCAL, _NO_HEADERS)
     assert resp.status_code == 401
+
+
+def _seed_registry(workspace: Path) -> Path:
+    """Write a minimal registry under the workspace the route resolves."""
+    path = workspace / "registry" / "domains.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "domains": {
+                    "ai": {
+                        "label": "人工智能 / AI",
+                        "aliases": ["AI"],
+                        "arxiv_cats": ["cs.CL"],
+                        "venues": [
+                            {"name": "ACL", "tier": "A", "enabled": True, "origin": "ccf-2026"},
+                            {"name": "EMNLP", "tier": "B", "enabled": False, "origin": "ccf-2026"},
+                        ],
+                        "confirmed": False,
+                        "updated_at": "2026-09-27T11:47:11Z",
+                    }
+                },
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    return path
+
+
+@pytest.mark.asyncio
+async def test_domains_routes_serve_and_curate_the_registry(
+    bus: MagicMock, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The read route and both curation mutations, over the real server.
+
+    The registry is resolved from the agent workspace rather than the config
+    dir, so the monkeypatch is what keeps this test off the live
+    ``~/.nanobot/workspace/registry/domains.json``.
+    """
+    monkeypatch.setattr("nanobot.webui.domains_api.get_workspace_path", lambda: tmp_path)
+    registry = _seed_registry(tmp_path)
+    sm = _seed_session(tmp_path, key="websocket:domains")
+    channel = _ch(bus, session_manager=sm, port=29912)
+    server_task = asyncio.create_task(channel.start())
+    try:
+        token = channel.gateway.tokens.issue_api_token(300)
+        auth = {"Authorization": f"Bearer {token}"}
+
+        read = await _http_get("http://127.0.0.1:29912/api/webui/domains", headers=auth)
+        assert read.status_code == 200
+        body = read.json()
+        assert body["domains"][0]["id"] == "ai"
+        assert body["domains"][0]["venue_count"] == 2
+        assert body["domains"][0]["enabled_count"] == 1
+        assert body["domains"][0]["confirmed"] is False
+
+        toggled = await _webui_mutate(
+            channel,
+            "domains.venue.set_enabled",
+            {"domain_id": "ai", "venue": "EMNLP", "enabled": True},
+        )
+        assert toggled.status_code == 200
+        assert toggled.json()["domains"][0]["enabled_count"] == 2
+        # Ticking a box must not quietly mark the domain curated.
+        assert toggled.json()["domains"][0]["confirmed"] is False
+
+        confirmed = await _webui_mutate(
+            channel,
+            "domains.confirm",
+            {"domain_id": "ai", "confirmed": True},
+        )
+        assert confirmed.status_code == 200
+        assert confirmed.json()["domains"][0]["confirmed"] is True
+
+        on_disk = json.loads(registry.read_text(encoding="utf-8"))
+        assert on_disk["domains"]["ai"]["confirmed"] is True
+        assert {v["name"]: v["enabled"] for v in on_disk["domains"]["ai"]["venues"]} == {
+            "ACL": True,
+            "EMNLP": True,
+        }
+    finally:
+        await channel.stop()
+        await server_task
+
+
+@pytest.mark.asyncio
+async def test_domains_mutations_reject_plain_http(
+    bus: MagicMock, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Both curation paths must stay unreachable without an authenticated socket."""
+    monkeypatch.setattr("nanobot.webui.domains_api.get_workspace_path", lambda: tmp_path)
+    _seed_registry(tmp_path)
+    channel = _ch(bus)
+
+    for path in ("/api/webui/domains/venue/enabled", "/api/webui/domains/confirm"):
+        response = await channel.gateway.http.dispatch(
+            _LOCAL,
+            _FakeReq({"Host": "127.0.0.1:8765"}, path=path),
+        )
+        assert response is not None, path
+        assert response.status_code == 405, path
+        assert b"authenticated WebSocket" in response.body, path
+
+
+@pytest.mark.asyncio
+async def test_domains_read_requires_a_token(
+    bus: MagicMock, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr("nanobot.webui.domains_api.get_workspace_path", lambda: tmp_path)
+    _seed_registry(tmp_path)
+    channel = _ch(bus)
+
+    response = await channel.gateway.http.dispatch(
+        _LOCAL,
+        _FakeReq({"Host": "127.0.0.1:8765"}, path="/api/webui/domains"),
+    )
+
+    assert response is not None
+    assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_domains_read_reports_a_missing_registry(
+    bus: MagicMock, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """No registry is a setup step, so it answers 404 and names the builder."""
+    monkeypatch.setattr("nanobot.webui.domains_api.get_workspace_path", lambda: tmp_path)
+    channel = _ch(bus)
+    token = channel.gateway.tokens.issue_api_token(300)
+
+    response = await channel.gateway.http.dispatch(
+        _LOCAL,
+        _FakeReq(
+            {"Host": "127.0.0.1:8765", "Authorization": f"Bearer {token}"},
+            path="/api/webui/domains",
+        ),
+    )
+
+    assert response is not None
+    assert response.status_code == 404
+    assert b"build_registry.py" in response.body
