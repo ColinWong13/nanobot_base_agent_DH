@@ -253,8 +253,13 @@ export function AppsCatalogSettings({
           <div className="relative flex-1">
             <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
             <Input
+              // type="search" is what makes this a search bar rather than a
+              // filled text field; without it the pill styling in
+              // SETTINGS_SEARCH_INPUT_CLASS lands on a square-cornered box.
+              type="search"
               value={query}
               onChange={(event) => onQueryChange(event.target.value)}
+              aria-label={tx("settings.apps.searchPlaceholder", "Search Apps")}
               placeholder={tx("settings.apps.searchPlaceholder", "Search Apps")}
               className={cn(
                 "h-12 pl-11 text-[15px]",
@@ -1406,7 +1411,7 @@ function CliAppReadyPanel({
               {app.display_name}
             </h3>
             <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10.5px] font-medium text-muted-foreground">
-              <Check className="h-3 w-3 text-emerald-600 dark:text-emerald-300" aria-hidden />
+              <Check className="h-3 w-3 text-success" aria-hidden />
               {t("settings.cliApps.readyStatus", { defaultValue: "Ready" })}
             </span>
           </div>

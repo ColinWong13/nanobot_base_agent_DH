@@ -187,7 +187,7 @@ export function Sidebar(props: SidebarProps) {
           onClick={collapsed ? props.onExpand : undefined}
           tabIndex={collapsed ? 0 : -1}
           className={cn(
-            "host-no-drag flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors",
+            "host-no-drag flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors",
             props.hostChromeInset && "mt-5",
             collapsed
               ? "hover:bg-sidebar-accent/60"
@@ -425,11 +425,11 @@ function SidebarActionButton({
       onFocus={onIntent}
       onPointerEnter={onIntent}
       className={cn(
-        "touch-target group h-8 min-w-0 gap-2 overflow-hidden rounded-xl font-normal",
+        "touch-target group h-8 min-w-0 gap-2 overflow-hidden rounded-full font-normal",
         SIDEBAR_SELECTION_ACTION_ITEM_CLASS,
         collapsed
           ? "w-8 justify-center gap-0 px-0"
-          : iconOnly ? "w-8 shrink-0 justify-center gap-0 rounded-xl px-0"
+          : iconOnly ? "w-8 shrink-0 justify-center gap-0 rounded-full px-0"
           : "w-full justify-start gap-2 px-2 text-[13px] leading-5 [&_svg]:h-[18px] [&_svg]:w-[18px] [&_svg]:stroke-[1.75]",
         active
           ? "text-sidebar-accent-foreground"

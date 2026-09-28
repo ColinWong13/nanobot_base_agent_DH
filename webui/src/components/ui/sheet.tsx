@@ -4,6 +4,10 @@ import { X } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { useTranslation } from "react-i18next";
 
+import {
+  modalOverlayClassName,
+  modalSurfaceClassName,
+} from "@/components/ui/floating-surface";
 import { cn } from "@/lib/utils";
 
 const Sheet = DialogPrimitive.Root;
@@ -17,9 +21,10 @@ const SheetOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-black/40",
-      "data-[state=open]:animate-in data-[state=closed]:animate-out",
-      "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      // Sheets used to carry their own scrim -- a flat bg-black/40 with no
+      // blur, next to the blurred one dialogs and alert dialogs already share.
+      // Two treatments for the same "the page behind is inert" signal.
+      modalOverlayClassName,
       "motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none",
       className,
     )}
@@ -29,7 +34,9 @@ const SheetOverlay = React.forwardRef<
 SheetOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 const sheetVariants = cva(
-  "fixed z-50 flex flex-col gap-4 bg-background transition ease-in-out",
+  // A sheet is an MD3 modal surface, so it takes the same container colour and
+  // elevation as a dialog rather than the plain page background.
+  `fixed z-50 flex flex-col gap-4 ${modalSurfaceClassName} transition ease-standard`,
   {
     variants: {
       side: {

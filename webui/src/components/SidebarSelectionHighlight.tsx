@@ -13,11 +13,11 @@ interface SidebarSelectionHighlightProps extends HTMLAttributes<HTMLDivElement> 
 }
 
 export const SIDEBAR_SELECTION_ITEM_CLASS =
-  "relative z-[1] transition-[color] duration-150 ease-out motion-reduce:transition-none";
+  "relative z-[1] transition-[color] duration-150 ease-standard motion-reduce:transition-none";
 
 // During a drag, animate only the shared highlight, not its measured target as well.
 export const SIDEBAR_SELECTION_ACTION_ITEM_CLASS =
-  "relative z-[1] transition-[width,padding,color] [transition-duration:300ms,300ms,150ms] ease-out group-data-[resizing=true]/sidebar:transition-none motion-reduce:transition-none";
+  "relative z-[1] transition-[width,padding,color] [transition-duration:300ms,300ms,150ms] ease-standard group-data-[resizing=true]/sidebar:transition-none motion-reduce:transition-none";
 
 export function SidebarSelectionHighlight({
   targetRef,
@@ -114,7 +114,12 @@ export function SidebarSelectionHighlight({
         data-testid={`${scope}-selection-highlight`}
         data-active-id={activeId ?? undefined}
         aria-hidden="true"
-        className="pointer-events-none absolute left-0 top-0 z-0 !mt-0 rounded-xl bg-sidebar-foreground/[0.055] opacity-0 transition-[transform,width,height] duration-300 ease-out will-change-transform motion-reduce:transition-none dark:bg-white/[0.07]"
+        // MD3's navigation-drawer active indicator: a filled pill in
+        // secondary-container that slides between rows. It used to be a 5.5%
+        // wash of the foreground, which meant the selection was legible only as
+        // a slight dimming -- and --sidebar-selected, the token that exists for
+        // exactly this, was referenced nowhere in the codebase.
+        className="pointer-events-none absolute left-0 top-0 z-0 !mt-0 rounded-full bg-sidebar-selected opacity-0 transition-[transform,width,height] duration-300 ease-standard will-change-transform motion-reduce:transition-none"
       />
     </div>
   );

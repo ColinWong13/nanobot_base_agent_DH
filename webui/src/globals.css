@@ -71,7 +71,12 @@
        Material tonal values at the same visual weight as the roles above:
        tone 40-ish in light, tone 80-ish in dark. Before this existed, ~195
        call sites reached for raw emerald/amber/blue. --------------------- */
-    --success: 123 46% 34%;
+    /* 28% keeps this token legible in both of its jobs: as text on a surface,
+       and as text on the 10% wash of itself that the status chips draw. At the
+       lighter 34% it looked fine as plain text but fell to 3.9:1 once tinted
+       behind itself, which is the pairing the chips actually use. It also
+       lands on the same lightness step as --warning (28) and --info (30). */
+    --success: 123 46% 28%;
     --success-foreground: 0 0% 100%;
     --warning: 34 100% 28%;
     --warning-foreground: 0 0% 100%;
@@ -97,16 +102,20 @@
     --temporary-control-active: hsl(var(--warning));
     --temporary-foreground: 34 100% 28%;
     --radius: 0.4375rem;
-    /* Shared shape scale: marks, compact content, controls, and progressively larger surfaces. */
+    /* Shared shape scale: marks, compact content, controls, and progressively
+       larger surfaces. Every step is now MD3's own (4/8/12/16/24/28/32).
+       Three of them used to sit between steps -- 18px for floating surfaces and
+       22px for both panels and modals -- which left no way to tell a panel from
+       a dialog by shape and put neither where the spec says they belong. */
     --radius-mark: 0.25rem;
     --radius-compact: 0.5rem;
     --radius-control: 0.75rem;
-    --radius-floating: 1.125rem;
-    --radius-panel: 1.375rem;
-    --radius-modal: 1.375rem;
-    --radius-prominent: 1.75rem;
+    --radius-floating: 1rem;
+    --radius-panel: 1.5rem;
+    /* MD3 gives dialogs the larger step; a modal should not read as a panel. */
+    --radius-modal: 1.75rem;
+    --radius-prominent: 2rem;
     --radius-pill: 9999px;
-    --radius-hero: 3rem;
     /* MD3 motion. Declared once here so no component hand-writes the bezier;
        tailwind.config.js mirrors these as ease-standard/decelerate/accelerate
        for class-based use. */
@@ -1124,9 +1133,13 @@
     .segmented-control-indicator[data-animate="true"] {
       transition-property: transform, width;
       transition-duration: 220ms, 160ms;
-      transition-timing-function:
-        cubic-bezier(0.2, 0.95, 0.25, 1.08),
-        cubic-bezier(0.2, 0, 0, 1);
+      /* Both curves used to be written out here, and the transform one had a
+         1.08 overshoot on its last control point -- a fifth hand-rolled bezier
+         in a codebase that already declares the three it needs. The overshoot
+         also fought the width transition: the pill would overshoot sideways
+         while still growing. --ease-standard is the same curve the width was
+         already using, so this is one curve for both, defined once. */
+      transition-timing-function: var(--ease-standard);
     }
   }
 }
@@ -1353,8 +1366,13 @@
     text-align-last: justify;
   }
   @media (hover: hover) {
-    .settings-hover:hover { background-color: hsl(var(--sidebar-foreground) / 0.055); }
-    .dark .settings-hover:hover { background-color: rgb(255 255 255 / 0.07); }
+    /* MD3's hover state layer: 8% of the on-colour, not a second colour. Using
+       --foreground means one rule covers both modes -- the wash is dark-on-light
+       in light mode and light-on-dark in dark mode -- so the .dark override that
+       used to hardcode rgb(255 255 255 / 0.07) is gone. --foreground is also the
+       right on-colour for both surfaces this class serves: settings rows and the
+       sidebar's action rows. */
+    .settings-hover:hover { background-color: hsl(var(--foreground) / 0.08); }
   }
   .settings-editor { padding: 16px var(--settings-inset, 16px); }
   @media (min-width: 640px) {

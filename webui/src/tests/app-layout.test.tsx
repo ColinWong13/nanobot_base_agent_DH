@@ -1917,7 +1917,10 @@ describe("App layout", () => {
       expect(highlight).toHaveClass(
         "transition-[transform,width,height]",
         "duration-300",
-        "ease-out",
+        // MD3's emphasized-decelerate. The highlight is the navigation
+        // drawer's active indicator, so it moves on the system curve rather
+        // than a generic ease-out.
+        "ease-standard",
         "motion-reduce:transition-none",
       );
     }

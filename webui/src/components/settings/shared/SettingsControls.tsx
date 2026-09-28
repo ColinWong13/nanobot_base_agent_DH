@@ -17,9 +17,14 @@ import { isNativeRuntime } from "@/lib/runtime";
 import type { NanobotFeatureInfo } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
+/**
+ * Settings search boxes are MD3 search bars, so they only need to override the
+ * *fill*: the pill shape and the focus ring come from the Input's own
+ * searchBarClassName, and the outline goes away because an MD3 search bar has
+ * no border. Callers must pass type="search" for any of that to apply.
+ */
 export const SETTINGS_SEARCH_INPUT_CLASS = cn(
-  "border-border/45 bg-settings-surface transition-colors hover:border-border/70",
-  "focus-visible:border-border/70 focus-visible:bg-background",
+  "border-0 bg-surface-container-high transition-colors",
 );
 
 export function CapabilityInstallNotice({
@@ -215,7 +220,7 @@ export function SettingsRow({
   children?: ReactNode;
 }) {
   return (
-    <div className="settings-row rounded-xl transition-colors settings-hover focus-within:bg-sidebar-accent/60">
+    <div className="settings-row rounded-xl transition-colors settings-hover focus-within:bg-foreground/[0.12]">
       <div className="min-w-0">
         <div className="select-none text-[14px] font-medium leading-5 text-foreground">
           {description ? <SettingsHint description={description}>{title}</SettingsHint> : title}
@@ -359,7 +364,7 @@ export function SettingsStatusMessage({
     <span
       className={cn(
         "inline-flex items-center gap-2",
-        tone === "accent" && "font-medium text-blue-600 dark:text-blue-300",
+        tone === "accent" && "font-medium text-info",
         tone === "danger" && "font-medium text-destructive",
       )}
     >
@@ -367,8 +372,7 @@ export function SettingsStatusMessage({
         <span
           className={cn(
             "h-1.5 w-1.5 shrink-0 rounded-full",
-            tone === "accent" &&
-              "bg-blue-500 dark:bg-blue-400",
+            tone === "accent" && "bg-info",
             tone === "danger" && "bg-destructive/70",
           )}
           aria-hidden
@@ -390,8 +394,10 @@ export function StatusPill({
     <span
       className={cn(
         "inline-flex max-w-[260px] select-none items-center rounded-full px-2.5 py-1 text-[12px] font-medium",
-        tone === "success" && "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-        tone === "warning" && "bg-amber-500/10 text-amber-700 dark:text-amber-300",
+        // One class per tone, no dark: override: --success/--warning already
+        // carry the mode-correct value, which is what the token pair is for.
+        tone === "success" && "bg-success/10 text-success",
+        tone === "warning" && "bg-warning/10 text-warning",
         tone === "neutral" && "bg-muted text-muted-foreground",
       )}
     >
@@ -424,7 +430,10 @@ export function NumberInput({
           const parsed = Number(event.target.value);
           if (Number.isFinite(parsed)) onChange(parsed);
         }}
-        className={cn("h-9 w-full rounded-full text-[13px]", suffix && "pr-12")}
+        // No rounded-full here: a number field is a text field, so it takes the
+        // filled shape from the Input itself. A pill would keep the square
+        // corners' inset underline while rounding the box around it.
+        className={cn("h-9 w-full text-[13px]", suffix && "pr-12")}
       />
       {suffix ? <span className="pointer-events-none absolute inset-y-0 right-3 flex select-none items-center text-[12px] text-muted-foreground">{suffix}</span> : null}
     </div>

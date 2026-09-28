@@ -45,7 +45,10 @@ describe("SessionSearchDialog", () => {
     );
 
     const dialog = screen.getByRole("dialog");
-    expect(dialog).toHaveClass("bg-background");
+    // A dialog is an MD3 surface-container-high, which is opaque. What this
+    // guards is opacity, not which particular surface token won: a translucent
+    // palette over a scrolled transcript is unreadable.
+    expect(dialog).toHaveClass("bg-surface-container-high");
     expect(dialog.className).not.toContain("bg-popover/");
     expect(dialog.className).not.toContain("backdrop-blur");
     expect(screen.getByTestId("session-search-scroll")).toHaveClass("overflow-y-auto");

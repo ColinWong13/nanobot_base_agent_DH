@@ -139,7 +139,12 @@ export function SegmentedControl<T extends string>({
           data-segmented-control-indicator
           data-animate={indicator.animate && animateIndicator ? "true" : "false"}
           className={cn(
-            "segmented-control-indicator pointer-events-none absolute left-0 z-0 rounded-full bg-background shadow-[0_1px_2px_hsl(var(--foreground)/0.08)] ring-1 ring-inset ring-border/25",
+            // The shadow used to be a hand-written 8% --foreground. In light
+            // mode that reads as a shadow, but in dark mode --foreground is
+            // near-white, so an 8% wash of it was a faint glow -- the pill read
+            // as flat exactly where it needed to lift. --elevation-1 carries a
+            // per-mode shadow colour instead.
+            "segmented-control-indicator pointer-events-none absolute left-0 z-0 rounded-full bg-background shadow-elevation-1 ring-1 ring-inset ring-border/25",
             indicatorClassName,
           )}
           style={{
