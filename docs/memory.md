@@ -17,7 +17,7 @@ nanobot does not treat memory as one giant file.
 It separates memory into layers, because different kinds of remembering deserve different tools:
 
 - `session.messages` holds the living short-term conversation.
-- `memory/history.jsonl` is the running archive of compressed past turns.
+- `memory/history.jsonl` is the running archive of compressed past turns, plus anything the agent chose to save with the `remember` tool.
 - `SOUL.md`, `USER.md`, and `memory/MEMORY.md` are the durable knowledge files.
 - `GitStore` records how those durable files change over time.
 
@@ -30,6 +30,8 @@ Memory moves through nanobot in two stages.
 ### Stage 1: Consolidator
 
 When a conversation grows large, the `Consolidator` summarizes older turns and appends the result to `memory/history.jsonl`, while keeping recent conversation available. Each summary preserves useful long-term facts and a short handoff for active work.
+
+The `Consolidator` is not the only writer. The `remember` tool appends individual facts to the same file the moment the agent learns them, so a fact worth keeping does not have to wait for the conversation to grow large enough to consolidate — or for the next Dream run. Both writers share one `MemoryStore` instance, whose append lock keeps cursor allocation atomic across them.
 
 This file is:
 

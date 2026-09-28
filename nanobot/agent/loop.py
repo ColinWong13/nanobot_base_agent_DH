@@ -624,6 +624,9 @@ class AgentLoop:
             timezone=self.context.timezone or "UTC",
             workspace_sandbox=self.workspace_scopes.sandbox_status,
             runtime_control=AgentRuntimeControl(self),
+            # AgentLoop has no `memory` attribute of its own — the store lives on
+            # ContextBuilder, so reach it through self.context.
+            memory=self.context.memory,
         )
         loader = ToolLoader()
         registered = loader.load(ctx, self.tools)

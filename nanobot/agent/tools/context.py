@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Protocol, runtime_checkable
 
 if TYPE_CHECKING:
+    from nanobot.agent.memory import MemoryStore
     from nanobot.agent.subagent import SubagentManager
     from nanobot.agent.tools.exec_session import ExecSessionManager
     from nanobot.agent.tools.file_state import FileStates
@@ -90,3 +91,7 @@ class ToolContext:
     timezone: str = "UTC"
     workspace_sandbox: WorkspaceSandboxStatus | None = None
     runtime_control: RuntimeControl | None = None
+    # The loop's own MemoryStore instance, passed by reference. Tools must never
+    # construct their own: `_append_lock` is per-instance, so a second store would
+    # hand out colliding cursors and corrupt `.dream_cursor`.
+    memory: MemoryStore | None = None

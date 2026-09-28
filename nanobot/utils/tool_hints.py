@@ -21,6 +21,11 @@ _TOOL_FORMATS: dict[str, tuple[list[str], str, bool, bool]] = {
     "x_search":   (["query"],                        'search X "{}"', False, False),
     "web_fetch":  (["url"],                            "fetch {}",    True,  False),
     "list_dir":   (["path"],                           "ls {}",       True,  False),
+    # No interpolation on purpose: `_extract_arg` falls back to the first string
+    # value in args when a key is missing, and `tag` is optional — so keying on
+    # it would print the note body itself whenever tag is omitted. An empty
+    # key_args list short-circuits before any value is pulled.
+    "remember":   ([],                                  "remember",    False, False),
 }
 
 # Matches file paths embedded in shell commands, including quoted paths with spaces.
