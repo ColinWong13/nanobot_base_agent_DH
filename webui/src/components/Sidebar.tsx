@@ -6,10 +6,12 @@ import {
 } from "react";
 import {
   Archive,
+  BookMarked,
   Brain,
   CalendarClock,
   Library,
   MessageCircle,
+  Network,
   PanelLeftClose,
   Search,
   Settings,
@@ -70,9 +72,19 @@ interface SidebarProps {
   onOpenAutomations: () => void;
   onOpenChannels: () => void;
   onOpenDomains: () => void;
+  onOpenKnowledge: () => void;
+  onOpenGraph: () => void;
   onSettingsIntent?: () => void;
   onOpenSearch: () => void;
-  activeUtility?: "apps" | "skills" | "automations" | "channels" | "domains" | null;
+  activeUtility?:
+    | "apps"
+    | "skills"
+    | "automations"
+    | "channels"
+    | "domains"
+    | "knowledge"
+    | "graph"
+    | null;
   onToggleArchived: () => void;
   onCollapse?: () => void;
   onExpand?: () => void;
@@ -265,6 +277,28 @@ export function Sidebar(props: SidebarProps) {
           active={props.activeUtility === "domains"}
           selectionRef={activeActionRef}
           icon={<Library className="h-4 w-4" />}
+        />
+        <SidebarActionButton
+          collapsed={collapsed}
+          label={t("settings.nav.knowledge", { defaultValue: "Knowledge" })}
+          shortcut={sidebarShortcutLabel("knowledge", apple)}
+          ariaKeyShortcuts={sidebarShortcutAria("knowledge")}
+          onClick={props.onOpenKnowledge}
+          onIntent={props.onSettingsIntent}
+          active={props.activeUtility === "knowledge"}
+          selectionRef={activeActionRef}
+          icon={<BookMarked className="h-4 w-4" />}
+        />
+        <SidebarActionButton
+          collapsed={collapsed}
+          label={t("settings.nav.graph", { defaultValue: "Graph" })}
+          shortcut={sidebarShortcutLabel("graph", apple)}
+          ariaKeyShortcuts={sidebarShortcutAria("graph")}
+          onClick={props.onOpenGraph}
+          onIntent={props.onSettingsIntent}
+          active={props.activeUtility === "graph"}
+          selectionRef={activeActionRef}
+          icon={<Network className="h-4 w-4" />}
         />
         {props.archivedCount ? (
           <SidebarActionButton

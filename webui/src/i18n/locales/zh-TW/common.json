@@ -254,7 +254,9 @@
       "mcp": "MCP",
       "apps": "應用程式",
       "automations": "自動任務",
-      "skills": "技能"
+      "skills": "技能",
+      "knowledge": "知識",
+      "graph": "圖譜"
     },
     "sections": {
       "interface": "介面",

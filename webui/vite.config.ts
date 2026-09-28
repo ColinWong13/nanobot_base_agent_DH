@@ -6,7 +6,7 @@ import { gzipSync } from "node:zlib";
 
 const GZIP_MIN_BYTES = 4 * 1024;
 const GZIP_ASSET_PATTERN = /\.(?:css|html|js|json|mjs|svg)$/i;
-const LAZY_FEATURE_CHUNK_PREFIXES = ["markdown-vendor-", "syntax-highlight-", "katex-"];
+const LAZY_FEATURE_CHUNK_PREFIXES = ["markdown-vendor-", "syntax-highlight-", "katex-", "graph-vendor-"];
 
 export function entryLazyFeatureImports(imports: string[]): string[] {
   return imports.filter((fileName) =>
@@ -64,6 +64,11 @@ export function webuiManualChunk(id: string): string | undefined {
   if (locale) return `locale-${locale}`;
   // Clipboard actions are shared with lazy Markdown and must not pull it into the shell.
   if (id.endsWith("/src/lib/clipboard.ts")) return "clipboard";
+  // The graph page is the only consumer, and it is lazy. Naming the chunk keeps
+  // cytoscape's ~500KB in a file the shell never downloads, and the
+  // `graph-vendor-` prefix above makes the entry-chunk guard fail the build if
+  // an eager import ever creeps back in.
+  if (id.includes("node_modules/cytoscape")) return "graph-vendor";
   if (id.endsWith("/src/lib/markdown-math.ts")
     || id.includes("node_modules/rehype-katex/")
     // The micromark barrel also exports an HTML renderer that imports KaTeX.

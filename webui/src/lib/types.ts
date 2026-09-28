@@ -389,6 +389,107 @@ export interface DomainsPayload {
   suspects: string[];
 }
 
+/** One paper card in the Obsidian vault. Mirrors `vault_index._read_papers`. */
+export interface KnowledgePaper {
+  id: string;
+  title: string;
+  year: number | null;
+  venue: string | null;
+  venue_tier: string | null;
+  status: string | null;
+  /** arXiv categories, straight from the source. */
+  topics: string[];
+  /**
+   * Research themes. Distinct from `topics`, and the distinction is the whole
+   * point of the theme dimension: `topics` is what the source called it and is
+   * far too coarse to browse by (`cs.AI` covers everything), while this is the
+   * judgement the review made by reading the papers.
+   */
+  topic_terms: string[];
+  /** Registry domain ids the card was collected under. */
+  domains: string[];
+  added: string | null;
+  updated: string | null;
+  one_liner: string;
+  url: string | null;
+  path: string;
+}
+
+export interface KnowledgeTopic {
+  /** The short label the cards carry and the graph draws. */
+  term: string;
+  /** The review's full heading for it, which is where the argument is. */
+  title: string;
+  /** Slug of the review that declares this theme, if any. */
+  review: string | null;
+  count: number;
+}
+
+export interface KnowledgeDomain {
+  id: string;
+  /** Read from the registry, so renaming a domain renames it here too. */
+  label: string;
+  count: number;
+}
+
+export interface KnowledgeReview {
+  slug: string;
+  topic: string;
+  papers: number | null;
+  window: string | null;
+  created: string | null;
+  updated: string | null;
+  themes: { term: string; title: string }[];
+  path: string;
+}
+
+export interface KnowledgeWeekly {
+  week: string;
+  range: string | null;
+  papers_added: number | null;
+  path: string;
+}
+
+export interface KnowledgeInquiry {
+  key: string;
+  channel: string | null;
+  title: string;
+  created_at: string | null;
+  updated_at: string | null;
+  questions: string[];
+  /**
+   * What entered the vault that day. Named for what it is on purpose: the
+   * session transcripts truncate tool output, so "what this question collected"
+   * is not recoverable, and presenting a day's total as an answer to a question
+   * would be a claim nobody can check.
+   */
+  library_that_day: { date: string | null; papers: string[] };
+}
+
+export interface KnowledgeIndex {
+  version: number;
+  /** Absolute path of the vault the index was read from. */
+  vault: string;
+  workspace: string;
+  fingerprint: string;
+  papers: KnowledgePaper[];
+  topics: KnowledgeTopic[];
+  domains: KnowledgeDomain[];
+  reviews: KnowledgeReview[];
+  weekly: KnowledgeWeekly[];
+  /** Cards that could not be parsed. Shown, not swallowed -- see the page. */
+  skipped: { path: string; reason: string }[];
+  counts: {
+    papers: number;
+    topics: number;
+    domains: number;
+    reviews: number;
+    weekly: number;
+    skipped: number;
+  };
+  inquiries: KnowledgeInquiry[];
+}
+
 /** Structured UI blob on ``progress`` WS frames; channels may add more ``kind`` values later. */
 interface AgentUIBlob {
   kind: string;

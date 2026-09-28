@@ -254,7 +254,9 @@
       "mcp": "MCP",
       "apps": "Applications",
       "automations": "Automatisations",
-      "skills": "Compétences"
+      "skills": "Compétences",
+      "knowledge": "Connaissances",
+      "graph": "Graphe"
     },
     "sections": {
       "interface": "Interface utilisateur",

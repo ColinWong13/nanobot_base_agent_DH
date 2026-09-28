@@ -440,7 +440,9 @@
       "apps": "应用",
       "automations": "自动任务",
       "skills": "技能",
-      "memory": "记忆"
+      "memory": "记忆",
+      "knowledge": "知识",
+      "graph": "图谱"
     },
     "sections": {
       "interface": "界面",

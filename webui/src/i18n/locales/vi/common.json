@@ -254,7 +254,9 @@
       "mcp": "MCP",
       "apps": "Ứng dụng",
       "automations": "Tự động hóa",
-      "skills": "Kỹ năng"
+      "skills": "Kỹ năng",
+      "knowledge": "Kiến thức",
+      "graph": "Đồ thị"
     },
     "sections": {
       "interface": "Giao diện",

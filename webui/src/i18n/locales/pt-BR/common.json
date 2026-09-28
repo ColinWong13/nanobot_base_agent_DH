@@ -254,7 +254,9 @@
       "memory": "Memória",
       "apps": "Aplicativos",
       "automations": "Automações",
-      "skills": "Habilidades"
+      "skills": "Habilidades",
+      "knowledge": "Conhecimento",
+      "graph": "Grafo"
     },
     "sections": {
       "interface": "Interface do usuário",

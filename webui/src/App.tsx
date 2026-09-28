@@ -123,7 +123,16 @@ const TOKEN_REFRESH_MIN_DELAY_MS = 5_000;
 const PAIRING_POLL_INTERVAL_MS = 5_000;
 const PAIRING_IDLE_POLL_INTERVAL_MS = 15_000;
 const PAIRING_DISMISS_SNOOZE_MS = 30_000;
-type ShellView = "chat" | "settings" | "apps" | "automations" | "skills" | "channels" | "domains";
+type ShellView =
+  | "chat"
+  | "settings"
+  | "apps"
+  | "automations"
+  | "skills"
+  | "channels"
+  | "domains"
+  | "knowledge"
+  | "graph";
 type ShellRoute = {
   view: ShellView;
   activeKey: string | null;
@@ -180,6 +189,8 @@ const SETTINGS_SECTION_KEYS: SettingsSectionKey[] = [
   "apps",
   "automations",
   "domains",
+  "knowledge",
+  "graph",
   "memory",
   "skills",
   "runtime",
@@ -195,7 +206,17 @@ function defaultShellRoute(): ShellRoute {
 }
 
 function shellViewForSettingsSection(section: SettingsSectionKey): ShellView {
-  if (section === "apps" || section === "automations" || section === "skills" || section === "channels" || section === "domains") return section;
+  // Spelled out as comparisons rather than a lookup: this way the narrowing is
+  // what proves the return type, and there is no cast to keep honest.
+  if (
+    section === "apps"
+    || section === "automations"
+    || section === "skills"
+    || section === "channels"
+    || section === "domains"
+    || section === "knowledge"
+    || section === "graph"
+  ) return section;
   return "settings";
 }
 
@@ -271,6 +292,12 @@ function readShellRoute(): ShellRoute {
   }
   if (path === "/domains") {
     return { view: "domains", activeKey, settingsSection: "domains" };
+  }
+  if (path === "/knowledge") {
+    return { view: "knowledge", activeKey, settingsSection: "knowledge" };
+  }
+  if (path === "/graph") {
+    return { view: "graph", activeKey, settingsSection: "graph" };
   }
   if (path.startsWith("/temporary/")) {
     const encoded = path.slice("/temporary/".length);
@@ -2079,10 +2106,23 @@ function Shell({
     setMobileSidebarOpen(false);
   }, [activeKey, navigate]);
 
+  const onOpenKnowledge = useCallback(() => {
+    setSessionSearchOpen(false);
+    navigate({ view: "knowledge", activeKey, settingsSection: "knowledge" });
+    setMobileSidebarOpen(false);
+  }, [activeKey, navigate]);
+
+  const onOpenGraph = useCallback(() => {
+    setSessionSearchOpen(false);
+    navigate({ view: "graph", activeKey, settingsSection: "graph" });
+    setMobileSidebarOpen(false);
+  }, [activeKey, navigate]);
+
   useEffect(() => {
     const actions = { newChat: onNewChat, search: onOpenSessionSearch, apps: onOpenApps,
       skills: onOpenSkills, automations: onOpenAutomations, channels: onOpenChannels,
-      domains: onOpenDomains, settings: () => onOpenSettings() };
+      domains: onOpenDomains, knowledge: onOpenKnowledge, graph: onOpenGraph,
+      settings: () => onOpenSettings() };
     const handleKeyDown = (event: globalThis.KeyboardEvent) => {
       const action = matchSidebarShortcut(event);
       if (!action) return;
@@ -2091,7 +2131,7 @@ function Shell({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onNewChat, onOpenSessionSearch, onOpenApps, onOpenSkills, onOpenAutomations, onOpenChannels, onOpenDomains, onOpenSettings]);
+  }, [onNewChat, onOpenSessionSearch, onOpenApps, onOpenSkills, onOpenAutomations, onOpenChannels, onOpenDomains, onOpenKnowledge, onOpenGraph, onOpenSettings]);
 
   const onSettingsSectionChange = useCallback(
     (section: SettingsSectionKey) => {
@@ -2589,6 +2629,18 @@ function Shell({
       });
       return;
     }
+    if (view === "knowledge") {
+      document.title = t("app.documentTitle.chat", {
+        title: t("settings.nav.knowledge", { defaultValue: "Knowledge" }),
+      });
+      return;
+    }
+    if (view === "graph") {
+      document.title = t("app.documentTitle.chat", {
+        title: t("settings.nav.graph", { defaultValue: "Graph" }),
+      });
+      return;
+    }
     document.title = activeSession
       ? t("app.documentTitle.chat", { title: headerTitle })
       : t("app.documentTitle.base");
@@ -2646,9 +2698,15 @@ function Shell({
     onOpenChannels,
     onOpenSkills,
     onOpenDomains,
+    onOpenKnowledge,
+    onOpenGraph,
     onSettingsIntent,
     onOpenSearch: onOpenSessionSearch,
-    activeUtility: view === "apps" || view === "automations" || view === "skills" || view === "channels" || view === "domains" ? view : null,
+    activeUtility:
+      view === "apps" || view === "automations" || view === "skills" || view === "channels"
+      || view === "domains" || view === "knowledge" || view === "graph"
+        ? view
+        : null,
     onToggleArchived,
     pinnedKeys: sidebarPinnedTabKeys,
     archivedKeys: sidebarArchivedTabKeys,

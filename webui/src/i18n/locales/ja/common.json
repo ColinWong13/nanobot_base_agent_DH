@@ -254,7 +254,9 @@
       "mcp": "MCP",
       "apps": "アプリ",
       "automations": "自動タスク",
-      "skills": "スキル"
+      "skills": "スキル",
+      "knowledge": "知識",
+      "graph": "グラフ"
     },
     "sections": {
       "interface": "インターフェース",

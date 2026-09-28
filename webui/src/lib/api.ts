@@ -11,6 +11,7 @@ import type {
   DomainVenue,
   FilePreviewPayload,
   ImageGenerationSettingsUpdate,
+  KnowledgeIndex,
   McpPresetsPayload,
   McpOAuthFlowPayload,
   MarketplaceProvider,
@@ -413,6 +414,26 @@ export async function fetchDomains(
 ): Promise<DomainsPayload> {
   return request<DomainsPayload>(
     `${base}/api/webui/domains`,
+    token,
+    undefined,
+    API_READ_TIMEOUT_MS,
+  );
+}
+
+/**
+ * Read the whole vault index behind the knowledge pages.
+ *
+ * One request for both pages: the browse page groups these rows and the graph
+ * page draws edges between the same ones, so a second endpoint would only be a
+ * second chance for the two to disagree. The gateway caches the scan by vault
+ * fingerprint, so calling it again after a page switch is cheap.
+ */
+export async function fetchKnowledge(
+  token: string,
+  base: string = "",
+): Promise<KnowledgeIndex> {
+  return request<KnowledgeIndex>(
+    `${base}/api/webui/knowledge`,
     token,
     undefined,
     API_READ_TIMEOUT_MS,

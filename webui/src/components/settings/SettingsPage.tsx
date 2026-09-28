@@ -37,6 +37,8 @@ import {
 } from "@/components/settings/system/AutomationsSettings";
 import { ChannelsSettings } from "@/components/settings/system/ChannelsSettings";
 import { DomainsSettings } from "@/components/settings/domains/DomainsSettings";
+import { KnowledgePage } from "@/components/settings/knowledge/KnowledgePage";
+import { LazyGraphPage } from "@/components/settings/knowledge/LazyGraphPage";
 import { RUNTIME_CONFIG_FIELDS, type RuntimeConfigPage } from "@/components/settings/system/runtime-config-fields";
 import { RuntimeConfigSettings } from "@/components/settings/system/RuntimeConfigSettings";
 import { RuntimeSettings } from "@/components/settings/system/RuntimeSettings";
@@ -598,6 +600,10 @@ export function SettingsPage({
         return <SkillsCatalogSettings skills={skills} />;
       case "domains":
         return <DomainsSettings />;
+      case "knowledge":
+        return <KnowledgePage />;
+      case "graph":
+        return <LazyGraphPage />;
       case "runtime":
         return (
           <div className="settings-stack">

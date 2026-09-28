@@ -15,6 +15,8 @@ export type SettingsSectionKey =
   | "apps"
   | "automations"
   | "domains"
+  | "knowledge"
+  | "graph"
   | "memory"
   | "skills"
   | "runtime"

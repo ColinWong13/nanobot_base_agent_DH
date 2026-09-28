@@ -254,7 +254,9 @@
       "mcp": "MCP",
       "apps": "앱",
       "automations": "자동화",
-      "skills": "스킬"
+      "skills": "스킬",
+      "knowledge": "지식",
+      "graph": "그래프"
     },
     "sections": {
       "interface": "인터페이스",

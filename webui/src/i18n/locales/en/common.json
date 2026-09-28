@@ -440,7 +440,9 @@
       "apps": "Apps",
       "automations": "Automations",
       "skills": "Skills",
-      "memory": "Memory"
+      "memory": "Memory",
+      "knowledge": "Knowledge",
+      "graph": "Graph"
     },
     "sections": {
       "interface": "Interface",
