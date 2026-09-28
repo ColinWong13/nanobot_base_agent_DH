@@ -23,6 +23,11 @@
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
+    /* MD3 tertiary (Phase 3). No existing token carried this role: MD3 reserves
+       it for the FAB and for accents that must not read as a primary action.
+       Baseline MD3 #7D5260 / #FFFFFF. */
+    --tertiary: 340 21% 41%;
+    --tertiary-foreground: 0 0% 100%;
     --muted: 0 0% 96.1%;
     --muted-foreground: 0 0% 45.1%;
     --accent: 0 0% 96.1%;
@@ -50,6 +55,13 @@
     --radius-modal: 1.375rem;
     --radius-prominent: 1.75rem;
     --radius-pill: 9999px;
+    --radius-hero: 3rem;
+    /* MD3 motion. Declared once here so no component hand-writes the bezier;
+       tailwind.config.js mirrors these as ease-standard/decelerate/accelerate
+       for class-based use. */
+    --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --ease-decelerate: cubic-bezier(0, 0, 0, 1);
+    --ease-accelerate: cubic-bezier(0.3, 0, 1, 1);
     --content-column-width: 49.5rem;
     --sidebar: 40 8% 96.8%;
     --sidebar-foreground: 0 0% 3.9%;
@@ -78,6 +90,11 @@
     --primary-foreground: 0 0% 9%;
     --secondary: var(--card);
     --secondary-foreground: 0 0% 98%;
+    /* MD3 dark tertiary: #EFB8C8 / #492532 from the baseline dark scheme.
+       Literal triplets on purpose -- --secondary and --muted alias var(--card)
+       above, and tertiary must stay independent of the card surface. */
+    --tertiary: 343 63% 83%;
+    --tertiary-foreground: 338 33% 22%;
     --muted: var(--card);
     --muted-foreground: 0 0% 65%;
     --accent: 0 0% 25%;
@@ -107,6 +124,29 @@
     --automation-view-track: hsl(var(--muted) / 0.65);
     --scrollbar-thumb: hsl(var(--muted-foreground) / 0.28);
     --scrollbar-thumb-hover: hsl(var(--muted-foreground) / 0.44);
+  }
+}
+
+/* MD3 ambient layer. Soft colour fields that sit behind content, painted with
+   the role colours rather than a fixed palette so they follow the theme.
+   These are decoration: callers must mark them aria-hidden="true", or a
+   screen reader will announce an empty element inside the content flow. */
+@layer components {
+  .ambient-shape {
+    position: absolute;
+    z-index: 0;
+    border-radius: var(--radius-pill);
+    filter: blur(64px);
+    pointer-events: none;
+  }
+  .ambient-shape-primary {
+    background-color: hsl(var(--primary) / 0.35);
+  }
+  .ambient-shape-secondary {
+    background-color: hsl(var(--secondary) / 0.55);
+  }
+  .ambient-shape-tertiary {
+    background-color: hsl(var(--tertiary) / 0.4);
   }
 }
 

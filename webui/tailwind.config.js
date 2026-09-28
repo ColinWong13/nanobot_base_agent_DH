@@ -58,6 +58,11 @@ export default {
         panel: "var(--radius-panel)",
         modal: "var(--radius-modal)",
         prominent: "var(--radius-prominent)",
+        hero: "var(--radius-hero)",
+        // --radius-pill has existed as a CSS variable since the shape scale was
+        // written, but it never had a utility, so `rounded-pill` silently did
+        // nothing. MD3 pills are the single most-used shape, so wire it up.
+        pill: "var(--radius-pill)",
       },
       colors: {
         background: "hsl(var(--background))",
@@ -90,6 +95,10 @@ export default {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+        tertiary: {
+          DEFAULT: "hsl(var(--tertiary))",
+          foreground: "hsl(var(--tertiary-foreground))",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -107,6 +116,14 @@ export default {
           canvas: "hsl(var(--settings-canvas))",
           surface: "hsl(var(--settings-surface))",
         },
+      },
+      // MD3 motion curves. The same three values are exposed as --ease-* CSS
+      // variables in globals.css so hand-written CSS and utility classes share
+      // one definition instead of each component retyping the bezier.
+      transitionTimingFunction: {
+        standard: "cubic-bezier(0.2, 0, 0, 1)",
+        decelerate: "cubic-bezier(0, 0, 0, 1)",
+        accelerate: "cubic-bezier(0.3, 0, 1, 1)",
       },
       keyframes: {
         "accordion-down": {
