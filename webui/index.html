@@ -14,9 +14,9 @@
     />
     <meta
       name="theme-color"
-      content="#ffffff"
-      data-theme-color-light="#ffffff"
-      data-theme-color-dark="#303030"
+      content="#fffbfe"
+      data-theme-color-light="#fffbfe"
+      data-theme-color-dark="#141218"
     />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -41,10 +41,15 @@
         touch-action: manipulation;
       }
 
+      /* These four colours are the MD3 background/on-background pair, written
+         as literals on purpose: this sheet paints the first frame, before
+         globals.css has downloaded, so it cannot read --background. Keep it in
+         step with the :root and .dark blocks there or the first paint flashes
+         the previous theme's colours. */
       body {
         margin: 0;
-        background: #ffffff;
-        color: #0a0a0a;
+        background: #fffbfe;
+        color: #1c1b1f;
         font-family:
           system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           "Helvetica Neue", Arial, "Noto Sans", "Noto Sans SC",
@@ -53,8 +58,8 @@
       }
 
       html.dark body {
-        background: #303030;
-        color: #fafafa;
+        background: #141218;
+        color: #e6e0e9;
       }
 
       .boot-splash {
@@ -68,12 +73,12 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        color: rgba(255, 255, 255, 0.74);
+        color: rgba(230, 224, 233, 0.74);
         font-size: 14px;
       }
 
       html:not(.dark) .boot-splash-inner {
-        color: rgba(10, 10, 10, 0.64);
+        color: rgba(28, 27, 31, 0.64);
       }
 
       .boot-dot {

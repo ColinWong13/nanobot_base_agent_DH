@@ -116,6 +116,68 @@ export default {
           canvas: "hsl(var(--settings-canvas))",
           surface: "hsl(var(--settings-surface))",
         },
+        // The MD3 surface ladder. Nesting under `surface` is what produces
+        // `bg-surface-container`, `bg-surface-container-low`, and so on.
+        surface: {
+          DEFAULT: "hsl(var(--background))",
+          "container-lowest": "hsl(var(--surface-container-lowest))",
+          "container-low": "hsl(var(--surface-container-low))",
+          container: "hsl(var(--surface-container))",
+          "container-high": "hsl(var(--surface-container-high))",
+          "container-highest": "hsl(var(--surface-container-highest))",
+        },
+        "on-surface-variant": "hsl(var(--on-surface-variant))",
+        outline: {
+          DEFAULT: "hsl(var(--outline))",
+          variant: "hsl(var(--outline-variant))",
+        },
+        // NB: `secondary`/`secondary-foreground` already ARE MD3's
+        // secondary-container/on-secondary-container pair, and `muted` is
+        // surface-variant. Aliases would give one role two names, which is the
+        // drift this file exists to prevent, so they are not repeated here.
+        "primary-container": "hsl(var(--primary-container))",
+        "on-primary-container": "hsl(var(--on-primary-container))",
+        "inverse-surface": "hsl(var(--inverse-surface))",
+        "inverse-on-surface": "hsl(var(--inverse-on-surface))",
+        "inverse-primary": "hsl(var(--inverse-primary))",
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
+      },
+      // MD3 elevation. Named by level rather than by size so a call site says
+      // how far off the page it is, and so the light/dark shadow colour stays
+      // inside the token instead of every caller pairing a dark: override.
+      boxShadow: {
+        "elevation-1": "var(--elevation-1)",
+        "elevation-2": "var(--elevation-2)",
+        "elevation-3": "var(--elevation-3)",
+        "elevation-4": "var(--elevation-4)",
+      },
+      // MD3 type scale. Sizes are fixed; only the family, weight and colour are
+      // free. `label-lg` at 13px is the one step MD3 does not have -- it is
+      // kept because the sidebar, list rows and settings labels are built at
+      // that density, and rounding 123 call sites up to 14px would reflow
+      // truncation points rather than restyle them.
+      fontSize: {
+        "label-sm": ["0.6875rem", { lineHeight: "1rem" }],
+        "label-md": ["0.75rem", { lineHeight: "1rem" }],
+        "label-lg": ["0.8125rem", { lineHeight: "1.125rem" }],
+        "body-sm": ["0.8125rem", { lineHeight: "1.25rem" }],
+        "body-md": ["0.875rem", { lineHeight: "1.25rem" }],
+        "body-lg": ["1rem", { lineHeight: "1.5rem" }],
+        "title-md": ["1rem", { lineHeight: "1.5rem" }],
+        "title-lg": ["1.375rem", { lineHeight: "1.75rem" }],
+        "headline-sm": ["1.5rem", { lineHeight: "2rem" }],
+        "headline-md": ["1.75rem", { lineHeight: "2.25rem" }],
       },
       // MD3 motion curves. The same three values are exposed as --ease-* CSS
       // variables in globals.css so hand-written CSS and utility classes share

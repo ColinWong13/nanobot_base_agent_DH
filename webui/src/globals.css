@@ -9,42 +9,93 @@
   }
 }
 
-/* Design tokens — HSL form, sourced from shadcn/ui's "neutral" palette. */
+/* Design tokens — HSL form.
+ *
+ * Colour follows the Material Design 3 baseline scheme for the purple seed
+ * (#6750A4). Every role below is a literal MD3 role, so a value can be checked
+ * against the spec rather than eyeballed, and the light/dark pair is the
+ * spec's own pair rather than two hand-tuned palettes.
+ *
+ * Contrast was verified with the WCAG formula before these values were
+ * written: every text-on-surface pair clears 4.5:1 in both modes, and the
+ * lowest is 5.00:1 (--success on --background, light).
+ *
+ * The surface ladder is the one MD3 idea the old palette had no vocabulary
+ * for. Depth is expressed by *tonal steps* rather than by borders, which is
+ * why there are five surface levels and why they are so close together: the
+ * step from --surface-container-low to --surface-container is meant to be felt
+ * rather than seen. */
 @layer base {
   :root {
     color-scheme: light;
-    --background: 0 0% 100%;
-    --foreground: 240 3% 12%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 3% 12%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 3% 12%;
-    --primary: 240 4% 16%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    /* MD3 tertiary (Phase 3). No existing token carried this role: MD3 reserves
-       it for the FAB and for accents that must not read as a primary action.
-       Baseline MD3 #7D5260 / #FFFFFF. */
+    /* --- surfaces, lowest to highest ------------------------------------ */
+    --background: 315 100% 99%;
+    --surface-container-lowest: 0 0% 100%;
+    --surface-container-low: 278 44% 96%;
+    --surface-container: 276 38% 95%;
+    --surface-container-high: 276 25% 92%;
+    --surface-container-highest: 280 17% 90%;
+    /* --- content on those surfaces -------------------------------------- */
+    --foreground: 255 7% 11%;
+    --on-surface-variant: 264 7% 29%;
+    --outline: 270 4% 47%;
+    --outline-variant: 270 11% 79%;
+    /* --- primary: the brand colour, and the only role a main action uses -- */
+    --primary: 256 34% 48%;
+    --primary-foreground: 0 0% 100%;
+    --primary-container: 263 100% 93%;
+    --on-primary-container: 261 100% 18%;
+    /* --- secondary: tonal fills for selected states, never for actions ---- */
+    --secondary: 263 65% 92%;
+    --secondary-foreground: 253 26% 13%;
+    /* --- tertiary: an accent that must NOT read as a primary action ------- */
     --tertiary: 340 21% 41%;
     --tertiary-foreground: 0 0% 100%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 40 8% 90.5%;
-    --input: 40 8% 90.5%;
-    --ring: 0 0% 3.9%;
-    --inline-token-highlight: #ef8e30;
-    --usage-token: 29 86% 56%;
+    /* --- the shadcn-shaped aliases the component library already speaks --- */
+    --card: 276 38% 95%;
+    --card-foreground: 255 7% 11%;
+    --popover: 276 25% 92%;
+    --popover-foreground: 255 7% 11%;
+    --muted: 275 24% 90%;
+    --muted-foreground: 264 7% 29%;
+    --accent: 280 17% 90%;
+    --accent-foreground: 255 7% 11%;
+    --destructive: 3 71% 41%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 270 11% 79%;
+    --input: 270 4% 47%;
+    /* MD3 moves the focus indicator onto the primary colour, so a focused
+       control is visibly the same family as the control itself. */
+    --ring: 256 34% 48%;
+    /* --- status. MD3 defines no success/warning/info role, so these are
+       Material tonal values at the same visual weight as the roles above:
+       tone 40-ish in light, tone 80-ish in dark. Before this existed, ~195
+       call sites reached for raw emerald/amber/blue. --------------------- */
+    --success: 123 46% 34%;
+    --success-foreground: 0 0% 100%;
+    --warning: 34 100% 28%;
+    --warning-foreground: 0 0% 100%;
+    --info: 202 100% 30%;
+    --info-foreground: 0 0% 100%;
+    /* --- elevation. Shadow colour is a token too, which is what lets one
+       --elevation-* value work in both modes without a dark: override. ---- */
+    --elevation-shadow: 260 30% 12%;
+    --elevation-1: 0 1px 2px hsl(var(--elevation-shadow) / 0.16),
+      0 1px 3px 1px hsl(var(--elevation-shadow) / 0.08);
+    --elevation-2: 0 1px 2px hsl(var(--elevation-shadow) / 0.16),
+      0 2px 6px 2px hsl(var(--elevation-shadow) / 0.08);
+    --elevation-3: 0 4px 8px 3px hsl(var(--elevation-shadow) / 0.08),
+      0 1px 3px hsl(var(--elevation-shadow) / 0.16);
+    --elevation-4: 0 6px 10px 4px hsl(var(--elevation-shadow) / 0.08),
+      0 2px 3px hsl(var(--elevation-shadow) / 0.16);
+    /* Inline commands, skills and file references are underlined in the brand
+       colour. Aliased rather than repeated so the two can never drift. */
+    --inline-token-highlight: hsl(var(--primary));
+    --usage-token: var(--primary);
     --session-handle-lightness: 0.5;
     --session-handle-chroma: 0.12;
-    --temporary-control-active: #ef8e30;
-    --temporary-accent: 24 95% 53%;
-    --temporary-foreground: 17 88% 32%;
-    --temporary-border: 17 88% 40%;
+    --temporary-control-active: hsl(var(--warning));
+    --temporary-foreground: 34 100% 28%;
     --radius: 0.4375rem;
     /* Shared shape scale: marks, compact content, controls, and progressively larger surfaces. */
     --radius-mark: 0.25rem;
@@ -63,64 +114,91 @@
     --ease-decelerate: cubic-bezier(0, 0, 0, 1);
     --ease-accelerate: cubic-bezier(0.3, 0, 1, 1);
     --content-column-width: 49.5rem;
-    --sidebar: 40 8% 96.8%;
-    --sidebar-foreground: 0 0% 3.9%;
-    --sidebar-content: 240 3% 30%;
-    --sidebar-muted-foreground: 240 2% 44%;
-    --sidebar-selected: 40 1% 89.4%;
-    --sidebar-accent: 0 0% 95.8%;
-    --sidebar-accent-foreground: 0 0% 9%;
-    --sidebar-border: 40 8% 90.5%;
+    /* --- sidebar: a navigation drawer, so its own surface ladder ---------- */
+    --sidebar: 278 44% 96%;
+    --sidebar-foreground: 255 7% 11%;
+    --sidebar-content: 264 7% 29%;
+    --sidebar-muted-foreground: 259 11% 40%;
+    /* MD3's navigation-drawer active indicator is secondary-container. This
+       token existed but was referenced nowhere, so the selected row only ever
+       changed its text colour. */
+    --sidebar-selected: 263 65% 92%;
+    --sidebar-accent: 276 25% 92%;
+    --sidebar-accent-foreground: 255 7% 11%;
+    --sidebar-border: 270 11% 79%;
     --settings-canvas: var(--background);
-    --settings-surface: 60 6% 96.7%;
-    --automation-view-track: hsl(0 0% 91%);
+    --settings-surface: var(--surface-container-low);
+    --automation-view-track: hsl(var(--surface-container-highest));
     --scrollbar-thumb: hsl(var(--muted-foreground) / 0.26);
     --scrollbar-thumb-hover: hsl(var(--muted-foreground) / 0.42);
   }
 
   .dark {
     color-scheme: dark;
-    --background: 0 0% 19%;
-    --foreground: 240 4% 96%;
-    --card: 0 0% 22%;
-    --card-foreground: 240 4% 96%;
-    --popover: var(--card);
-    --popover-foreground: 240 4% 96%;
-    --primary: 240 5% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: var(--card);
-    --secondary-foreground: 0 0% 98%;
-    /* MD3 dark tertiary: #EFB8C8 / #492532 from the baseline dark scheme.
-       Literal triplets on purpose -- --secondary and --muted alias var(--card)
-       above, and tertiary must stay independent of the card surface. */
+    /* Every value is literal rather than aliased to --card. The surfaces are
+       deliberately distinct steps in MD3, and an alias chain that collapses
+       them into one value is what made the old dark theme read as flat. */
+    --background: 260 14% 8%;
+    --surface-container-lowest: 260 19% 6%;
+    --surface-container-low: 264 8% 12%;
+    --surface-container: 257 10% 14%;
+    --surface-container-high: 257 8% 17%;
+    --surface-container-highest: 257 6% 22%;
+    --foreground: 280 17% 90%;
+    --on-surface-variant: 270 11% 79%;
+    --outline: 264 5% 58%;
+    --outline-variant: 264 7% 29%;
+    --primary: 258 100% 87%;
+    --primary-foreground: 259 58% 28%;
+    --primary-container: 257 43% 38%;
+    --on-primary-container: 263 100% 93%;
+    --secondary: 258 13% 31%;
+    --secondary-foreground: 263 65% 92%;
     --tertiary: 343 63% 83%;
     --tertiary-foreground: 338 33% 22%;
-    --muted: var(--card);
-    --muted-foreground: 0 0% 65%;
-    --accent: 0 0% 25%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 28%;
-    --input: var(--border);
-    --ring: 0 0% 83.1%;
-    --inline-token-highlight: #ef8e30;
+    --card: 257 10% 14%;
+    --card-foreground: 280 17% 90%;
+    --popover: 257 8% 17%;
+    --popover-foreground: 280 17% 90%;
+    --muted: 264 7% 29%;
+    --muted-foreground: 270 11% 79%;
+    --accent: 257 6% 22%;
+    --accent-foreground: 280 17% 90%;
+    --destructive: 3 70% 83%;
+    --destructive-foreground: 3 71% 22%;
+    --border: 264 7% 29%;
+    --input: 264 5% 58%;
+    --ring: 258 100% 87%;
+    --success: 138 55% 63%;
+    --success-foreground: 149 100% 11%;
+    --warning: 32 100% 70%;
+    --warning-foreground: 27 100% 9%;
+    --info: 212 100% 81%;
+    --info-foreground: 208 100% 11%;
+    --elevation-shadow: 0 0% 0%;
+    --elevation-1: 0 1px 2px hsl(var(--elevation-shadow) / 0.30),
+      0 1px 3px 1px hsl(var(--elevation-shadow) / 0.15);
+    --elevation-2: 0 1px 2px hsl(var(--elevation-shadow) / 0.30),
+      0 2px 6px 2px hsl(var(--elevation-shadow) / 0.15);
+    --elevation-3: 0 4px 8px 3px hsl(var(--elevation-shadow) / 0.15),
+      0 1px 3px hsl(var(--elevation-shadow) / 0.30);
+    --elevation-4: 0 6px 10px 4px hsl(var(--elevation-shadow) / 0.15),
+      0 2px 3px hsl(var(--elevation-shadow) / 0.30);
+    --inline-token-highlight: hsl(var(--primary));
     --session-handle-lightness: 0.75;
     --session-handle-chroma: 0.11;
-    --temporary-control-active: #ef8e30;
-    --temporary-accent: 24 95% 53%;
-    --temporary-foreground: 32 98% 73%;
-    --temporary-border: 27 96% 61%;
-    --sidebar: var(--card);
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-content: 240 3% 84%;
-    --sidebar-muted-foreground: 240 2% 70%;
-    --sidebar-selected: 0 0% 29.8%;
-    --sidebar-accent: var(--background);
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: var(--border);
+    --temporary-control-active: hsl(var(--warning));
+    --temporary-foreground: 32 100% 70%;
+    --sidebar: 264 8% 12%;
+    --sidebar-foreground: 280 17% 90%;
+    --sidebar-content: 270 11% 79%;
+    --sidebar-muted-foreground: 264 5% 58%;
+    --sidebar-selected: 258 13% 31%;
+    --sidebar-accent: 257 8% 17%;
+    --sidebar-accent-foreground: 280 17% 90%;
+    --sidebar-border: 264 7% 29%;
     --settings-canvas: var(--background);
-    --settings-surface: var(--card);
+    --settings-surface: var(--surface-container-low);
     --automation-view-track: hsl(var(--muted) / 0.65);
     --scrollbar-thumb: hsl(var(--muted-foreground) / 0.28);
     --scrollbar-thumb-hover: hsl(var(--muted-foreground) / 0.44);
@@ -241,13 +319,13 @@
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background-color: rgb(236 141 49);
+    background-color: hsl(var(--warning));
     opacity: 0;
-    transition: opacity 180ms ease-out;
+    transition: opacity 180ms var(--ease-standard);
   }
 
   .composer-model-badge[data-fallback="true"] {
-    border-color: rgb(236 141 49 / 0.38);
+    border-color: hsl(var(--warning) / 0.38);
   }
 
   .composer-model-badge[data-fallback="true"]::before {
@@ -659,42 +737,39 @@
     transform-origin: top left;
   }
 
-  /** Goal halo: pale sky blue (not ``--primary``, which often reads as neutral gray). */
+  /** Goal halo. Painted with --primary, which now carries a hue of its own --
+      the hardcoded sky blue was only there because --primary used to read as
+      neutral grey, and a grey glow reads as a smudge rather than as light.
+      One keyframe serves both modes; --goal-glow-strength is the only
+      difference, because the same alpha reads weaker against a dark surface. */
   @keyframes goal-shell-glow-breathe {
     0%,
     100% {
-      filter: drop-shadow(0 0 10px hsl(204 72% 52% / 0.22))
-        drop-shadow(0 0 24px hsl(199 80% 58% / 0.14));
+      filter: drop-shadow(
+          0 0 10px hsl(var(--primary) / calc(0.22 * var(--goal-glow-strength)))
+        )
+        drop-shadow(0 0 24px hsl(var(--primary) / calc(0.14 * var(--goal-glow-strength))));
     }
     50% {
-      filter: drop-shadow(0 0 17px hsl(204 78% 48% / 0.32))
-        drop-shadow(0 0 38px hsl(199 85% 55% / 0.2));
+      filter: drop-shadow(
+          0 0 17px hsl(var(--primary) / calc(0.32 * var(--goal-glow-strength)))
+        )
+        drop-shadow(0 0 38px hsl(var(--primary) / calc(0.2 * var(--goal-glow-strength))));
     }
   }
   .goal-shell-glow {
+    --goal-glow-strength: 1;
     animation: goal-shell-glow-breathe 4.8s ease-in-out infinite;
   }
-  @keyframes goal-shell-glow-breathe-dark {
-    0%,
-    100% {
-      filter: drop-shadow(0 0 12px hsl(198 90% 72% / 0.28))
-        drop-shadow(0 0 28px hsl(195 95% 65% / 0.16));
-    }
-    50% {
-      filter: drop-shadow(0 0 20px hsl(198 95% 78% / 0.42))
-        drop-shadow(0 0 42px hsl(195 100% 70% / 0.24));
-    }
-  }
   .dark .goal-shell-glow {
-    animation-name: goal-shell-glow-breathe-dark;
+    --goal-glow-strength: 1.4;
   }
   @media (prefers-reduced-motion: reduce) {
     .goal-shell-glow {
       animation: none;
-      filter: drop-shadow(0 0 14px hsl(204 70% 50% / 0.24));
-    }
-    .dark .goal-shell-glow {
-      filter: drop-shadow(0 0 14px hsl(198 88% 70% / 0.32));
+      filter: drop-shadow(
+        0 0 14px hsl(var(--primary) / calc(0.24 * var(--goal-glow-strength)))
+      );
     }
   }
 

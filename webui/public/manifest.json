@@ -4,11 +4,11 @@
   "description": "nanobot AI assistant",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#fffbfe",
+  "theme_color": "#fffbfe",
   "color_scheme_dark": {
-    "background_color": "#303030",
-    "theme_color": "#303030"
+    "background_color": "#141218",
+    "theme_color": "#141218"
   },
   "orientation": "any",
   "icons": [
