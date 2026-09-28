@@ -22,8 +22,13 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="PRA" />
+    <!-- The .ico is declared first and deliberately: Safari does not render
+         SVG favicons and falls back to requesting /favicon.ico on its own
+         account, so leaving that to chance meant the browser asked for a file
+         the server answered with the SPA shell -- HTML, as an image. -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" type="image/svg+xml" href="/brand/pra_mark.svg" />
-    <link rel="alternate icon" type="image/png" sizes="32x32" href="/brand/pra_favicon_32.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/brand/pra_favicon_32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/brand/pra_apple_touch.png" />
     <link rel="manifest" href="/manifest.json" />
     <style>

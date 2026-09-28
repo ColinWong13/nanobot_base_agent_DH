@@ -7,8 +7,9 @@
     <meta name="theme-color" content="#FFFBFE" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#141218" media="(prefers-color-scheme: dark)" />
     <title>PRA</title>
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/brand/pra_mark.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/brand/pra_apple_touch.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/brand/pra_apple_touch.png" />
 
     <!--
       The landing page. Deliberately one self-contained file with no build
@@ -276,15 +277,29 @@
         color: hsl(var(--foreground));
       }
 
+      /* Same reasoning as .btn: the app's own controls all draw the focus
+         ring as a box-shadow, so this page does too. */
+      .nav-link:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px hsl(var(--primary) / 0.55);
+      }
+
       @media (min-width: 720px) {
         .nav-link {
           display: inline-block;
         }
       }
 
-      /* --- Buttons. Pill at every size, per MD3, with the state layer as an
-         overlay of the *text* colour rather than a second background --
-         which is what lets one rule serve the filled and tonal variants. --- */
+      /* --- Buttons. Pill at every size, per MD3. ---
+         The state layer is mixed into the background colour rather than laid
+         over it as a pseudo-element. The overlay is the more common recipe and
+         it was what this file did first, but an overlay has to sit under the
+         label, which means giving it its own stacking context (isolation) and
+         a negative z-index -- and WebKit promotes a pseudo-element with a
+         transitioned opacity onto its own compositing layer, which is not
+         reliably clipped by an ancestor's border-radius. The symptom is the
+         state colour showing as a square at the pill's four corners on hover.
+         A background is clipped to the border radius by definition. --- */
       .btn {
         position: relative;
         display: inline-flex;
@@ -301,55 +316,59 @@
         letter-spacing: 0.01em;
         text-decoration: none;
         cursor: pointer;
-        overflow: hidden;
-        isolation: isolate;
+        /* Both composed into the variant rules below rather than set directly
+           on a state, so a hover or a focus never silently drops the other. */
+        --focus-ring: 0 0 0 0 hsl(var(--primary) / 0);
+        --state-mix: 0%;
         transition:
+          background-color 200ms var(--ease-standard),
           box-shadow 200ms var(--ease-standard),
           transform 200ms var(--ease-standard);
       }
 
-      .btn::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: currentColor;
-        opacity: 0;
-        transition: opacity 200ms var(--ease-standard);
-        z-index: -1;
+      .btn:hover {
+        --state-mix: 8%;
       }
-
-      .btn:hover::after {
-        opacity: 0.08;
-      }
-      .btn:focus-visible::after {
-        opacity: 0.12;
-      }
-      .btn:active::after {
-        opacity: 0.12;
-      }
-
-      .btn:focus-visible {
-        outline: 3px solid hsl(var(--primary) / 0.5);
-        outline-offset: 2px;
-      }
-
       .btn:active {
+        --state-mix: 12%;
         transform: scale(0.97);
       }
 
+      /* The ring is a box-shadow, not an outline. Outlines did not follow
+         border-radius in Safari before 16.4, so on a pill the focus ring came
+         out as a square frame; that is fixed now, but a box-shadow is what
+         every control in the app already uses for this and there is no reason
+         for the landing page to be the one place that differs. */
+      .btn:focus-visible {
+        outline: none;
+        --state-mix: 12%;
+        --focus-ring: 0 0 0 3px hsl(var(--primary) / 0.55);
+      }
+
       .btn-filled {
-        background: hsl(var(--primary));
         color: hsl(var(--primary-foreground));
-        box-shadow: var(--elevation-1);
+        background-color: hsl(var(--primary));
+        background-color: color-mix(
+          in srgb,
+          hsl(var(--primary-foreground)) var(--state-mix),
+          hsl(var(--primary))
+        );
+        box-shadow: var(--focus-ring), var(--elevation-1);
       }
 
       .btn-filled:hover {
-        box-shadow: var(--elevation-2);
+        box-shadow: var(--focus-ring), var(--elevation-2);
       }
 
       .btn-tonal {
-        background: hsl(var(--primary-container));
         color: hsl(var(--on-primary-container));
+        background-color: hsl(var(--primary-container));
+        background-color: color-mix(
+          in srgb,
+          hsl(var(--on-primary-container)) var(--state-mix),
+          hsl(var(--primary-container))
+        );
+        box-shadow: var(--focus-ring);
       }
 
       .btn-lg {
@@ -652,7 +671,6 @@
         }
 
         .btn,
-        .btn::after,
         .card,
         .chip,
         .footer-inner a {
@@ -675,6 +693,8 @@
 
       .skip:focus {
         left: 0;
+        outline: none;
+        box-shadow: 0 0 0 3px hsl(var(--primary) / 0.55);
       }
     </style>
   </head>
