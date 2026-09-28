@@ -87,6 +87,30 @@
     }
   },
   "settings": {
+    "domains": {
+      "title": "Domínios de pesquisa",
+      "caption": "Escolha os venues que o agente consulta em cada domínio.",
+      "loading": "Carregando o registro…",
+      "empty": "O registro ainda não tem domínios.",
+      "missingTitle": "Ainda não há registro de venues",
+      "retry": "Tentar novamente",
+      "search": "Buscar venues",
+      "tier": "Nível",
+      "allTiers": "Todos os níveis",
+      "onlyEnabled": "Somente ativados",
+      "counts": "{{enabled}} de {{total}} ativados",
+      "noMatches": "Nenhum venue corresponde a estes filtros.",
+      "showMore": "Mostrar mais {{count}}",
+      "suspects": "O gerador sinalizou {{count}} entradas para revisão.",
+      "toggleVenue": "Usar {{name}}",
+      "confirmed": "Confirmado",
+      "confirmedNote": "Estes ajustes sobrevivem a uma reconstrução.",
+      "unconfirmAction": "Desfazer confirmação",
+      "unconfirmedTitle": "Não confirmado",
+      "unconfirmedBody": "Reconstruir o registro redefine estes ajustes.",
+      "confirmAction": "Confirmar",
+      "updatedAt": "Atualizado {{value}}"
+    },
     "timezoneNoMatches": "Nenhum fuso horário encontrado.",
     "configure": "Configurar",
     "exit": {
@@ -171,6 +195,7 @@
       "ariaLabel": "Seções de configurações"
     },
     "nav": {
+      "domains": "Domínios",
       "about": "Sobre",
       "capabilities": "Recursos",
       "general": "Geral",

@@ -87,6 +87,30 @@
     }
   },
   "settings": {
+    "domains": {
+      "title": "연구 도메인",
+      "caption": "도메인별로 에이전트가 검색할 학회와 저널을 선택합니다.",
+      "loading": "레지스트리를 불러오는 중…",
+      "empty": "레지스트리에 아직 도메인이 없습니다.",
+      "missingTitle": "학회·저널 레지스트리가 없습니다",
+      "retry": "다시 시도",
+      "search": "학회·저널 검색",
+      "tier": "등급",
+      "allTiers": "모든 등급",
+      "onlyEnabled": "사용 중만",
+      "counts": "{{total}}개 중 {{enabled}}개 사용",
+      "noMatches": "조건에 맞는 학회·저널이 없습니다.",
+      "showMore": "{{count}}개 더 보기",
+      "suspects": "빌더가 {{count}}건을 검토 대상으로 표시했습니다.",
+      "toggleVenue": "{{name}} 사용",
+      "confirmed": "확인됨",
+      "confirmedNote": "이 설정은 재빌드 후에도 유지됩니다.",
+      "unconfirmAction": "확인 해제",
+      "unconfirmedTitle": "확인되지 않음",
+      "unconfirmedBody": "레지스트리를 다시 빌드하면 이 설정이 초기화됩니다.",
+      "confirmAction": "확인",
+      "updatedAt": "업데이트 {{value}}"
+    },
     "timezoneNoMatches": "일치하는 시간대가 없습니다.",
     "configure": "설정",
     "exit": {
@@ -171,6 +195,7 @@
       "ariaLabel": "설정 섹션"
     },
     "nav": {
+      "domains": "도메인",
       "about": "정보",
       "capabilities": "기능",
       "general": "일반",

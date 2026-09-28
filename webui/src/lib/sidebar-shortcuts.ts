@@ -5,6 +5,7 @@ export const SIDEBAR_SHORTCUTS = {
   skills: { key: "2", shift: true },
   automations: { key: "3", shift: true },
   channels: { key: "4", shift: true },
+  domains: { key: "5", shift: true },
   settings: { key: ",", shift: false },
 } as const;
 

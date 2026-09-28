@@ -14,6 +14,7 @@ export type SettingsSectionKey =
   | "channels"
   | "apps"
   | "automations"
+  | "domains"
   | "memory"
   | "skills"
   | "runtime"

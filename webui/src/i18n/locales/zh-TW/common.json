@@ -87,6 +87,30 @@
     }
   },
   "settings": {
+    "domains": {
+      "title": "研究領域",
+      "caption": "選擇代理在每個領域檢索的會議與期刊。",
+      "loading": "正在讀取註冊表…",
+      "empty": "註冊表中還沒有領域。",
+      "missingTitle": "還沒有會議期刊註冊表",
+      "retry": "重試",
+      "search": "搜尋會議或期刊",
+      "tier": "等級",
+      "allTiers": "全部等級",
+      "onlyEnabled": "只看已啟用",
+      "counts": "已啟用 {{enabled}} / {{total}}",
+      "noMatches": "沒有符合條件的會議或期刊。",
+      "showMore": "再顯示 {{count}} 項",
+      "suspects": "建置指令碼標記了 {{count}} 筆待複核記錄。",
+      "toggleVenue": "啟用 {{name}}",
+      "confirmed": "已確認",
+      "confirmedNote": "這些勾選在重建後保留。",
+      "unconfirmAction": "取消確認",
+      "unconfirmedTitle": "尚未確認",
+      "unconfirmedBody": "重建註冊表會重設這些勾選。",
+      "confirmAction": "確認",
+      "updatedAt": "更新於 {{value}}"
+    },
     "timezoneNoMatches": "沒有符合的時區。",
     "configure": "設定",
     "exit": {
@@ -171,6 +195,7 @@
       "ariaLabel": "設定區段"
     },
     "nav": {
+      "domains": "領域",
       "about": "關於",
       "capabilities": "功能",
       "general": "一般",

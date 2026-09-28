@@ -123,7 +123,7 @@ const TOKEN_REFRESH_MIN_DELAY_MS = 5_000;
 const PAIRING_POLL_INTERVAL_MS = 5_000;
 const PAIRING_IDLE_POLL_INTERVAL_MS = 15_000;
 const PAIRING_DISMISS_SNOOZE_MS = 30_000;
-type ShellView = "chat" | "settings" | "apps" | "automations" | "skills" | "channels";
+type ShellView = "chat" | "settings" | "apps" | "automations" | "skills" | "channels" | "domains";
 type ShellRoute = {
   view: ShellView;
   activeKey: string | null;
@@ -179,6 +179,7 @@ const SETTINGS_SECTION_KEYS: SettingsSectionKey[] = [
   "channels",
   "apps",
   "automations",
+  "domains",
   "memory",
   "skills",
   "runtime",
@@ -194,7 +195,7 @@ function defaultShellRoute(): ShellRoute {
 }
 
 function shellViewForSettingsSection(section: SettingsSectionKey): ShellView {
-  if (section === "apps" || section === "automations" || section === "skills" || section === "channels") return section;
+  if (section === "apps" || section === "automations" || section === "skills" || section === "channels" || section === "domains") return section;
   return "settings";
 }
 
@@ -267,6 +268,9 @@ function readShellRoute(): ShellRoute {
   }
   if (path === "/skills") {
     return { view: "skills", activeKey, settingsSection: "skills" };
+  }
+  if (path === "/domains") {
+    return { view: "domains", activeKey, settingsSection: "domains" };
   }
   if (path.startsWith("/temporary/")) {
     const encoded = path.slice("/temporary/".length);
@@ -2069,9 +2073,16 @@ function Shell({
     setMobileSidebarOpen(false);
   }, [activeKey, navigate]);
 
+  const onOpenDomains = useCallback(() => {
+    setSessionSearchOpen(false);
+    navigate({ view: "domains", activeKey, settingsSection: "domains" });
+    setMobileSidebarOpen(false);
+  }, [activeKey, navigate]);
+
   useEffect(() => {
     const actions = { newChat: onNewChat, search: onOpenSessionSearch, apps: onOpenApps,
-      skills: onOpenSkills, automations: onOpenAutomations, channels: onOpenChannels, settings: () => onOpenSettings() };
+      skills: onOpenSkills, automations: onOpenAutomations, channels: onOpenChannels,
+      domains: onOpenDomains, settings: () => onOpenSettings() };
     const handleKeyDown = (event: globalThis.KeyboardEvent) => {
       const action = matchSidebarShortcut(event);
       if (!action) return;
@@ -2080,7 +2091,7 @@ function Shell({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onNewChat, onOpenSessionSearch, onOpenApps, onOpenSkills, onOpenAutomations, onOpenChannels, onOpenSettings]);
+  }, [onNewChat, onOpenSessionSearch, onOpenApps, onOpenSkills, onOpenAutomations, onOpenChannels, onOpenDomains, onOpenSettings]);
 
   const onSettingsSectionChange = useCallback(
     (section: SettingsSectionKey) => {
@@ -2572,6 +2583,12 @@ function Shell({
       });
       return;
     }
+    if (view === "domains") {
+      document.title = t("app.documentTitle.chat", {
+        title: t("settings.nav.domains", { defaultValue: "Domains" }),
+      });
+      return;
+    }
     document.title = activeSession
       ? t("app.documentTitle.chat", { title: headerTitle })
       : t("app.documentTitle.base");
@@ -2628,9 +2645,10 @@ function Shell({
     onOpenAutomations,
     onOpenChannels,
     onOpenSkills,
+    onOpenDomains,
     onSettingsIntent,
     onOpenSearch: onOpenSessionSearch,
-    activeUtility: view === "apps" || view === "automations" || view === "skills" || view === "channels" ? view : null,
+    activeUtility: view === "apps" || view === "automations" || view === "skills" || view === "channels" || view === "domains" ? view : null,
     onToggleArchived,
     pinnedKeys: sidebarPinnedTabKeys,
     archivedKeys: sidebarArchivedTabKeys,

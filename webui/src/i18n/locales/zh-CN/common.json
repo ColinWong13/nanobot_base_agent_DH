@@ -87,6 +87,30 @@
     }
   },
   "settings": {
+    "domains": {
+      "title": "研究领域",
+      "caption": "选择智能体在每个领域检索的会议与期刊。",
+      "loading": "正在读取注册表…",
+      "empty": "注册表中还没有领域。",
+      "missingTitle": "还没有会议期刊注册表",
+      "retry": "重试",
+      "search": "搜索会议或期刊",
+      "tier": "等级",
+      "allTiers": "全部等级",
+      "onlyEnabled": "只看已启用",
+      "counts": "已启用 {{enabled}} / {{total}}",
+      "noMatches": "没有符合条件的会议或期刊。",
+      "showMore": "再显示 {{count}} 项",
+      "suspects": "构建脚本标记了 {{count}} 条待复核记录。",
+      "toggleVenue": "启用 {{name}}",
+      "confirmed": "已确认",
+      "confirmedNote": "这些勾选在重建后保留。",
+      "unconfirmAction": "取消确认",
+      "unconfirmedTitle": "尚未确认",
+      "unconfirmedBody": "重建注册表会重置这些勾选。",
+      "confirmAction": "确认",
+      "updatedAt": "更新于 {{value}}"
+    },
     "timezoneNoMatches": "没有匹配的时区。",
     "configure": "配置",
     "exit": {
@@ -357,6 +381,7 @@
       "ariaLabel": "设置分区"
     },
     "nav": {
+      "domains": "领域",
       "about": "关于",
       "capabilities": "功能",
       "general": "通用",

@@ -87,6 +87,30 @@
     }
   },
   "settings": {
+    "domains": {
+      "title": "Lĩnh vực nghiên cứu",
+      "caption": "Chọn các hội nghị và tạp chí mà trợ lý tìm kiếm cho mỗi lĩnh vực.",
+      "loading": "Đang tải sổ đăng ký…",
+      "empty": "Sổ đăng ký chưa có lĩnh vực nào.",
+      "missingTitle": "Chưa có sổ đăng ký hội nghị, tạp chí",
+      "retry": "Thử lại",
+      "search": "Tìm hội nghị hoặc tạp chí",
+      "tier": "Hạng",
+      "allTiers": "Tất cả các hạng",
+      "onlyEnabled": "Chỉ bật",
+      "counts": "Đã bật {{enabled}} / {{total}}",
+      "noMatches": "Không có hội nghị hay tạp chí nào khớp bộ lọc.",
+      "showMore": "Hiện thêm {{count}} mục",
+      "suspects": "Trình tạo đã đánh dấu {{count}} mục cần xem lại.",
+      "toggleVenue": "Dùng {{name}}",
+      "confirmed": "Đã xác nhận",
+      "confirmedNote": "Các lựa chọn này được giữ lại sau khi tạo lại.",
+      "unconfirmAction": "Bỏ xác nhận",
+      "unconfirmedTitle": "Chưa xác nhận",
+      "unconfirmedBody": "Tạo lại sổ đăng ký sẽ đặt lại các lựa chọn này.",
+      "confirmAction": "Xác nhận",
+      "updatedAt": "Cập nhật {{value}}"
+    },
     "timezoneNoMatches": "Không tìm thấy múi giờ phù hợp.",
     "configure": "Cấu hình",
     "exit": {
@@ -171,6 +195,7 @@
       "ariaLabel": "Mục cài đặt"
     },
     "nav": {
+      "domains": "Lĩnh vực",
       "about": "Giới thiệu",
       "capabilities": "Tính năng",
       "general": "Chung",

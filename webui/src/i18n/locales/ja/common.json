@@ -87,6 +87,30 @@
     }
   },
   "settings": {
+    "domains": {
+      "title": "研究ドメイン",
+      "caption": "ドメインごとにエージェントが検索する会議・ジャーナルを選びます。",
+      "loading": "レジストリを読み込み中…",
+      "empty": "レジストリにドメインがまだありません。",
+      "missingTitle": "会議・ジャーナルのレジストリがありません",
+      "retry": "再試行",
+      "search": "会議・ジャーナルを検索",
+      "tier": "ティア",
+      "allTiers": "すべてのティア",
+      "onlyEnabled": "有効のみ",
+      "counts": "{{total}} 件中 {{enabled}} 件が有効",
+      "noMatches": "条件に一致する会議・ジャーナルがありません。",
+      "showMore": "さらに {{count}} 件表示",
+      "suspects": "ビルダーが {{count}} 件を要確認として報告しました。",
+      "toggleVenue": "{{name}} を有効にする",
+      "confirmed": "確認済み",
+      "confirmedNote": "これらの設定は再ビルド後も保持されます。",
+      "unconfirmAction": "確認を解除",
+      "unconfirmedTitle": "未確認",
+      "unconfirmedBody": "レジストリを再ビルドすると、これらの設定はリセットされます。",
+      "confirmAction": "確認",
+      "updatedAt": "更新: {{value}}"
+    },
     "timezoneNoMatches": "一致するタイムゾーンがありません。",
     "configure": "設定",
     "exit": {
@@ -171,6 +195,7 @@
       "ariaLabel": "設定セクション"
     },
     "nav": {
+      "domains": "ドメイン",
       "about": "nanobot について",
       "capabilities": "機能",
       "general": "一般",

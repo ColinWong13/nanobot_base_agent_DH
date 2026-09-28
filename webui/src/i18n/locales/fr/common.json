@@ -87,6 +87,30 @@
     }
   },
   "settings": {
+    "domains": {
+      "title": "Domaines de recherche",
+      "caption": "Choisissez les venues que l’agent interroge pour chaque domaine.",
+      "loading": "Chargement du registre…",
+      "empty": "Le registre ne contient encore aucun domaine.",
+      "missingTitle": "Aucun registre de venues",
+      "retry": "Réessayer",
+      "search": "Rechercher une venue",
+      "tier": "Rang",
+      "allTiers": "Tous les rangs",
+      "onlyEnabled": "Activées uniquement",
+      "counts": "{{enabled}} sur {{total}} activées",
+      "noMatches": "Aucune venue ne correspond à ces filtres.",
+      "showMore": "Afficher {{count}} de plus",
+      "suspects": "Le générateur a signalé {{count}} entrées à vérifier.",
+      "toggleVenue": "Utiliser {{name}}",
+      "confirmed": "Confirmé",
+      "confirmedNote": "Ces réglages survivent à une reconstruction.",
+      "unconfirmAction": "Annuler la confirmation",
+      "unconfirmedTitle": "Non confirmé",
+      "unconfirmedBody": "Reconstruire le registre réinitialise ces réglages.",
+      "confirmAction": "Confirmer",
+      "updatedAt": "Mis à jour {{value}}"
+    },
     "timezoneNoMatches": "Aucun fuseau horaire correspondant.",
     "configure": "Configurer",
     "exit": {
@@ -171,6 +195,7 @@
       "ariaLabel": "Sections des réglages"
     },
     "nav": {
+      "domains": "Domaines",
       "about": "À propos",
       "capabilities": "Fonctionnalités",
       "general": "Général",

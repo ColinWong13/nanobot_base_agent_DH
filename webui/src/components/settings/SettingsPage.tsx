@@ -36,6 +36,7 @@ import {
   AutomationsSettings,
 } from "@/components/settings/system/AutomationsSettings";
 import { ChannelsSettings } from "@/components/settings/system/ChannelsSettings";
+import { DomainsSettings } from "@/components/settings/domains/DomainsSettings";
 import { RUNTIME_CONFIG_FIELDS, type RuntimeConfigPage } from "@/components/settings/system/runtime-config-fields";
 import { RuntimeConfigSettings } from "@/components/settings/system/RuntimeConfigSettings";
 import { RuntimeSettings } from "@/components/settings/system/RuntimeSettings";
@@ -595,6 +596,8 @@ export function SettingsPage({
         );
       case "skills":
         return <SkillsCatalogSettings skills={skills} />;
+      case "domains":
+        return <DomainsSettings />;
       case "runtime":
         return (
           <div className="settings-stack">

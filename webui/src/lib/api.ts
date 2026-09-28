@@ -7,6 +7,7 @@ import type {
   ChannelValidationPayload,
   ChatSummary,
   CliAppsPayload,
+  DomainsPayload,
   FilePreviewPayload,
   ImageGenerationSettingsUpdate,
   McpPresetsPayload,
@@ -403,6 +404,47 @@ export async function deleteSkill(
   name: string,
 ): Promise<SkillActionPayload> {
   return mutation<SkillActionPayload>(transport, "skill.delete", { name });
+}
+
+export async function fetchDomains(
+  token: string,
+  base: string = "",
+): Promise<DomainsPayload> {
+  return request<DomainsPayload>(
+    `${base}/api/webui/domains`,
+    token,
+    undefined,
+    API_READ_TIMEOUT_MS,
+  );
+}
+
+/**
+ * Both registry mutations answer with the whole updated registry, so the caller
+ * replaces its state instead of patching the row it just touched — the counts
+ * and the `updated_at` stamp on the domain change too.
+ */
+export async function setDomainVenueEnabled(
+  transport: WebUIMutationTransport,
+  domainId: string,
+  venue: string,
+  enabled: boolean,
+): Promise<DomainsPayload> {
+  return mutation<DomainsPayload>(transport, "domains.venue.set_enabled", {
+    domain_id: domainId,
+    venue,
+    enabled,
+  });
+}
+
+export async function setDomainConfirmed(
+  transport: WebUIMutationTransport,
+  domainId: string,
+  confirmed: boolean,
+): Promise<DomainsPayload> {
+  return mutation<DomainsPayload>(transport, "domains.confirm", {
+    domain_id: domainId,
+    confirmed,
+  });
 }
 
 export async function searchMarketplaceSkills(

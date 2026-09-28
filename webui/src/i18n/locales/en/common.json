@@ -87,6 +87,30 @@
     }
   },
   "settings": {
+    "domains": {
+      "title": "Research domains",
+      "caption": "Choose which venues the agent searches for each domain.",
+      "loading": "Loading registry…",
+      "empty": "The registry has no domains yet.",
+      "missingTitle": "No venue registry yet",
+      "retry": "Retry",
+      "search": "Search venues",
+      "tier": "Tier",
+      "allTiers": "All tiers",
+      "onlyEnabled": "Enabled only",
+      "counts": "{{enabled}} of {{total}} enabled",
+      "noMatches": "No venue matches these filters.",
+      "showMore": "Show {{count}} more",
+      "suspects": "The builder flagged {{count}} entries for review.",
+      "toggleVenue": "Use {{name}}",
+      "confirmed": "Confirmed",
+      "confirmedNote": "These toggles survive a rebuild.",
+      "unconfirmAction": "Unconfirm",
+      "unconfirmedTitle": "Not confirmed",
+      "unconfirmedBody": "Rebuilding the registry resets these toggles.",
+      "confirmAction": "Confirm",
+      "updatedAt": "Updated {{value}}"
+    },
     "timezoneNoMatches": "No matching timezones.",
     "configure": "Configure",
     "exit": {
@@ -357,6 +381,7 @@
       "ariaLabel": "Settings sections"
     },
     "nav": {
+      "domains": "Domains",
       "about": "About",
       "capabilities": "Capabilities",
       "general": "General",

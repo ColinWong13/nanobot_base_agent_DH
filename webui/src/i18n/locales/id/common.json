@@ -87,6 +87,30 @@
     }
   },
   "settings": {
+    "domains": {
+      "title": "Domain riset",
+      "caption": "Pilih venue yang dicari agen untuk setiap domain.",
+      "loading": "Memuat registri…",
+      "empty": "Registri belum memiliki domain.",
+      "missingTitle": "Belum ada registri venue",
+      "retry": "Coba lagi",
+      "search": "Cari venue",
+      "tier": "Tingkat",
+      "allTiers": "Semua tingkat",
+      "onlyEnabled": "Hanya aktif",
+      "counts": "{{enabled}} dari {{total}} aktif",
+      "noMatches": "Tidak ada venue yang cocok dengan filter ini.",
+      "showMore": "Tampilkan {{count}} lagi",
+      "suspects": "Pembuat menandai {{count}} entri untuk ditinjau.",
+      "toggleVenue": "Gunakan {{name}}",
+      "confirmed": "Terkonfirmasi",
+      "confirmedNote": "Pilihan ini bertahan setelah pembuatan ulang.",
+      "unconfirmAction": "Batalkan konfirmasi",
+      "unconfirmedTitle": "Belum dikonfirmasi",
+      "unconfirmedBody": "Membuat ulang registri akan mengatur ulang pilihan ini.",
+      "confirmAction": "Konfirmasi",
+      "updatedAt": "Diperbarui {{value}}"
+    },
     "timezoneNoMatches": "Tidak ada zona waktu yang cocok.",
     "configure": "Konfigurasi",
     "exit": {
@@ -171,6 +195,7 @@
       "ariaLabel": "Bagian pengaturan"
     },
     "nav": {
+      "domains": "Domain",
       "about": "Tentang",
       "capabilities": "Fitur",
       "general": "Umum",
