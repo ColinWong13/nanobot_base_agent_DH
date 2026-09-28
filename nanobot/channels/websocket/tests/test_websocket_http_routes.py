@@ -25,6 +25,7 @@ from nanobot.session.keys import UNIFIED_SESSION_KEY
 from nanobot.session.manager import Session, SessionManager
 from nanobot.session.session_handles import SessionHandleResolver
 from nanobot.triggers.local_store import LocalTriggerStore
+from nanobot.webui import vault_index
 from nanobot.webui.gateway_services import GatewayServices, build_gateway_services
 
 from .ws_test_client import InProcessHttpChannel
@@ -4330,3 +4331,110 @@ async def test_domains_read_reports_a_missing_registry(
     assert response is not None
     assert response.status_code == 404
     assert b"build_registry.py" in response.body
+
+
+# --- the knowledge pages ----------------------------------------------------
+
+
+def _seed_vault(root: Path) -> None:
+    """One card and one review, in the layout the skill writes."""
+    papers = root / "AI Workspace" / "资讯检索" / "10-Papers"
+    reviews = root / "AI Workspace" / "资讯检索" / "20-Reviews"
+    papers.mkdir(parents=True)
+    reviews.mkdir(parents=True)
+    (papers / "2026-an-example-paper-arxiv-260912345.md").write_text(
+        "---\n"
+        "type: paper\n"
+        'title: "An Example Paper"\n'
+        "source: arxiv\n"
+        'source_id: "2609.12345"\n'
+        "topic_terms: [图结构 RAG]\n"
+        "domains: [ai]\n"
+        "added: 2026-09-27\n"
+        "---\n\n"
+        "## 一句话提要\n\n一句话。\n",
+        encoding="utf-8",
+    )
+    (reviews / "slr-rag.md").write_text(
+        "---\ntype: review\ntopic_slug: rag\nthemes: [图结构 RAG]\n---\n\n"
+        "### Theme 1: 图结构 RAG 的性价比之争\n\nProse.\n",
+        encoding="utf-8",
+    )
+
+
+@pytest.mark.asyncio
+async def test_knowledge_read_requires_a_token(bus: MagicMock, tmp_path: Path) -> None:
+    """The route reads the user's whole vault. Unauthenticated must be a 401
+    even though it is a GET -- there is no auth middleware behind dispatch."""
+    channel = _ch(bus)
+
+    response = await channel.gateway.http.dispatch(
+        _LOCAL,
+        _FakeReq({"Host": "127.0.0.1:8765"}, path="/api/webui/knowledge"),
+    )
+
+    assert response is not None
+    assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_knowledge_read_serves_the_vault(
+    bus: MagicMock, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _seed_vault(tmp_path)
+    monkeypatch.setenv(vault_index.VAULT_ENV, str(tmp_path))
+    # The registry lookup reads the workspace, not the vault; without this it
+    # would answer from the live one.
+    monkeypatch.setattr("nanobot.webui.vault_index.get_workspace_path", lambda *a, **k: tmp_path)
+    vault_index.invalidate_cache()
+    channel = _ch(bus)
+    token = channel.gateway.tokens.issue_api_token(300)
+
+    response = await channel.gateway.http.dispatch(
+        _LOCAL,
+        _FakeReq(
+            {"Host": "127.0.0.1:8765", "Authorization": f"Bearer {token}"},
+            path="/api/webui/knowledge",
+        ),
+    )
+
+    assert response is not None
+    assert response.status_code == 200
+    body = json.loads(response.body)
+    assert body["counts"] == {
+        "papers": 1,
+        "topics": 1,
+        "domains": 1,
+        "reviews": 1,
+        "weekly": 0,
+        "skipped": 0,
+    }
+    assert body["papers"][0]["id"] == "2609.12345"
+    assert body["topics"][0]["term"] == "图结构 RAG"
+    assert body["topics"][0]["title"] == "图结构 RAG 的性价比之争"
+    # No session manager on this channel, so the facet is empty rather than absent.
+    assert body["inquiries"] == []
+
+
+@pytest.mark.asyncio
+async def test_knowledge_read_reports_a_missing_workspace(
+    bus: MagicMock, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """An un-set-up vault is a setup step the user can take, not a server
+    fault, so it answers 404 and names the command."""
+    monkeypatch.setenv(vault_index.VAULT_ENV, str(tmp_path / "nowhere"))
+    vault_index.invalidate_cache()
+    channel = _ch(bus)
+    token = channel.gateway.tokens.issue_api_token(300)
+
+    response = await channel.gateway.http.dispatch(
+        _LOCAL,
+        _FakeReq(
+            {"Host": "127.0.0.1:8765", "Authorization": f"Bearer {token}"},
+            path="/api/webui/knowledge",
+        ),
+    )
+
+    assert response is not None
+    assert response.status_code == 404
+    assert b"vault-init" in response.body

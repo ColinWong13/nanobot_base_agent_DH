@@ -149,6 +149,11 @@ from nanobot.webui.transcript import (
     build_webui_trace_detail_response,
     webui_transcript_revision,
 )
+from nanobot.webui.vault_index import (
+    read_inquiries,
+    read_knowledge_index,
+    workspace_dir,
+)
 from nanobot.webui.workspaces import WebUIWorkspaceController
 
 _SLOW_WEBUI_HTTP_LOG_MS = 1_000
@@ -1581,6 +1586,8 @@ class GatewayHTTPHandler:
         domain_action = _DOMAINS_MUTATION_ACTIONS.get(got)
         if domain_action is not None:
             return self._handle_webui_domains_mutation(request, domain_action)
+        if got == "/api/webui/knowledge":
+            return self._handle_webui_knowledge(request)
         return None
 
     def _handle_commands(self, request: WsRequest) -> Response:
@@ -1873,6 +1880,50 @@ class GatewayHTTPHandler:
         except OSError:
             self._log.exception("failed to read or write the venue registry")
             return _http_error(500, "failed to access the venue registry")
+
+    def _handle_webui_knowledge(self, request: WsRequest) -> Response:
+        """Serve the vault index behind both knowledge pages.
+
+        One payload for both, because the browse page groups these rows and the
+        graph page draws edges between the same ones -- a second route would
+        only be a second chance for the two to disagree.
+
+        Read-only by design: the vault is written by the `literature-search`
+        skill, and a page that edited it would be a second writer nobody
+        version-controls.
+        """
+        if not self.check_api_token(request):
+            return _http_error(401, "Unauthorized")
+        try:
+            payload = read_knowledge_index()
+        except FileNotFoundError:
+            return _http_error(
+                404,
+                f"no literature workspace at {workspace_dir()}; create one with "
+                "skills/literature-search/scripts/paperctl.py vault-init",
+            )
+        except OSError:
+            self._log.exception("failed to read the Obsidian vault")
+            return _http_error(500, "failed to read the Obsidian vault")
+        return _http_json_response({**payload, "inquiries": self._knowledge_inquiries(payload)})
+
+    def _knowledge_inquiries(self, payload: dict[str, Any]) -> list[dict[str, Any]]:
+        """Attach past questions, degrading to none rather than to a 500.
+
+        The questions are the one facet that depends on the session store rather
+        than the vault. If that read fails, the vault index is still perfectly
+        good and the page can render without the inquiry tab -- a knowledge page
+        that 500s because a chat log is unreadable would be trading the whole
+        feature for its smallest part.
+        """
+        if self.session_manager is None:
+            return []
+        try:
+            rows = list_webui_sessions(self.session_manager)
+            return read_inquiries(rows, papers=payload["papers"])
+        except (OSError, ValueError):
+            self._log.exception("failed to read sessions for the knowledge page")
+            return []
 
     # -- Static file serving ------------------------------------------------
 
