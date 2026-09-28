@@ -818,7 +818,7 @@ def _custom_manifest(name: str, cfg: MCPServerConfig) -> dict[str, Any]:
     return app_manifest(
         app_id=name,
         display_name=name,
-        description="Custom MCP server from nanobot config.",
+        description="Custom MCP server from PRA config.",
         category="custom",
         source="mcp-custom",
         brand_color="#64748B",
@@ -899,7 +899,7 @@ def _custom_payload(
         "name": name,
         "display_name": name,
         "category": "custom",
-        "description": "Custom MCP server from nanobot config.",
+        "description": "Custom MCP server from PRA config.",
         "docs_url": "",
         "transport": transport,
         "auth": cfg.auth,

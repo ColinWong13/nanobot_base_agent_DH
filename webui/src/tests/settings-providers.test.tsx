@@ -83,7 +83,7 @@ describe("Settings providers", () => {
 
     expect(
       screen.getByText(
-        "Complete sign-in in your browser. If nanobot does not connect automatically, paste the authorization code below.",
+        "Complete sign-in in your browser. If PRA does not connect automatically, paste the authorization code below.",
       ),
     ).toBeInTheDocument();
     const callbackInput = await screen.findByRole("textbox", {
@@ -245,7 +245,7 @@ describe("Settings providers", () => {
 
     await chooseProviderToConfigure("OpenAI Codex");
     fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
-    const dialog = (await screen.findByText("Complete sign-in in your browser. If nanobot does not connect automatically, copy the full localhost callback URL from the address bar and paste it below.")).closest('[role="dialog"]') as HTMLElement;
+    const dialog = (await screen.findByText("Complete sign-in in your browser. If PRA does not connect automatically, copy the full localhost callback URL from the address bar and paste it below.")).closest('[role="dialog"]') as HTMLElement;
 
     expect(requestMutationMock).toHaveBeenCalledWith(
       "settings.provider.oauth_login",
@@ -255,7 +255,7 @@ describe("Settings providers", () => {
     expect(openMock).not.toHaveBeenCalled();
     expect(
       within(dialog).getByText(
-        "Complete sign-in in your browser. If nanobot does not connect automatically, copy the full localhost callback URL from the address bar and paste it below.",
+        "Complete sign-in in your browser. If PRA does not connect automatically, copy the full localhost callback URL from the address bar and paste it below.",
       ),
     ).toBeInTheDocument();
     expect(within(dialog).getByText("Waiting for the browser callback…")).toBeInTheDocument();
@@ -340,7 +340,7 @@ describe("Settings providers", () => {
       await chooseProviderToConfigure("OpenAI Codex");
       expect(
         screen.getByText(
-          "Sign in through this browser, then paste the full localhost callback URL back into nanobot.",
+          "Sign in through this browser, then paste the full localhost callback URL back into PRA.",
         ),
       ).toBeInTheDocument();
 

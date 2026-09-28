@@ -41,10 +41,16 @@ _STORE_VERSION = 1
 _STORE_LOCK_TIMEOUT_S = 15
 _REFRESH_LOCK_TIMEOUT_S = 60
 _DEFAULT_REDIRECT_URI = f"http://127.0.0.1{MCP_OAUTH_CALLBACK_PATH}"
-_CLIENT_URI = AnyHttpUrl("https://github.com/HKUDS/nanobot")
+# Who we say we are when registering with an MCP server. These are not UI
+# strings but they do surface in somebody's consent screen, so they name the
+# build the user actually has rather than upstream. The logo URL is fetched
+# by the MCP client, not by us -- until this fork is pushed it will 404 and
+# the consent screen shows no logo, which is harmless but is the reason to
+# keep it pointing at a repository that exists.
+_CLIENT_URI = AnyHttpUrl("https://github.com/ColinWong13/nanobot_base_agent_DH")
 _LOGO_URI = AnyHttpUrl(
-    "https://raw.githubusercontent.com/HKUDS/nanobot/main/"
-    "webui/public/brand/nanobot_apple_touch.png"
+    "https://raw.githubusercontent.com/ColinWong13/nanobot_base_agent_DH/main/"
+    "webui/public/brand/pra_apple_touch.png"
 )
 
 

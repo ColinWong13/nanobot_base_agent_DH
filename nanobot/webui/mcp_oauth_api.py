@@ -339,7 +339,7 @@ class McpOAuthManager:
         except Exception:
             flow.reload_result = {
                 "ok": False,
-                "message": "Signed in, but nanobot could not activate the MCP tools.",
+                "message": "Signed in, but PRA could not activate the MCP tools.",
                 "requires_restart": True,
             }
         finally:

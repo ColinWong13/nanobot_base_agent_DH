@@ -538,7 +538,7 @@ class WebUISettingsRouter:
         if self._mcp_reload is None:
             return {
                 "ok": False,
-                "message": "MCP runtime reload is unavailable. Restart nanobot to apply changes.",
+                "message": "MCP runtime reload is unavailable. Restart PRA to apply changes.",
                 "requires_restart": True,
             }
         try:
@@ -549,14 +549,14 @@ class WebUISettingsRouter:
         except asyncio.TimeoutError:
             return {
                 "ok": False,
-                "message": "MCP hot reload timed out. Restart nanobot to pick up changes.",
+                "message": "MCP hot reload timed out. Restart PRA to pick up changes.",
                 "requires_restart": True,
             }
         except Exception as exc:
             self.logger.exception("MCP hot reload failed")
             return {
                 "ok": False,
-                "message": "MCP hot reload failed. Restart nanobot to pick up changes.",
+                "message": "MCP hot reload failed. Restart PRA to pick up changes.",
                 "requires_restart": True,
                 "error": str(exc),
             }
@@ -708,7 +708,7 @@ class WebUISettingsRouter:
             return self._mcp_oauth_callback_page(ok=False, message=message, status=status)
         return self._mcp_oauth_callback_page(
             ok=True,
-            message=f"Authorization received for {name}. Return to nanobot to finish connecting.",
+            message=f"Authorization received for {name}. Return to PRA to finish connecting.",
         )
 
     def _mcp_oauth_error_response(self, exc: Exception, *, action: str) -> Response:

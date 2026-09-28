@@ -1088,7 +1088,7 @@ class CliAppManager:
         name = str(app.get("name") or "unknown")
         display = str(app.get("display_name") or name)
         entry = str(app.get("entry_point") or f"cli-anything-{name}")
-        description = (_catalog_description(app) or f"Use {display} from nanobot.")[:1024]
+        description = (_catalog_description(app) or f"Use {display} from PRA.")[:1024]
         return f"""---
 name: {_skill_name(name)}
 description: {json.dumps(description, ensure_ascii=False)}
@@ -1277,7 +1277,7 @@ Use the `run_cli_app` tool with `name="{name}"` for command execution. Do not in
                 )
                 message = (
                     f"Uninstall for {app['display_name']} completed, but {reason}, "
-                    "so nanobot kept it installed."
+                    "so PRA kept it installed."
                 )
                 return self.payload() | {
                     "last_action": {
@@ -1295,8 +1295,8 @@ Use the `run_cli_app` tool with `name="{name}"` for command execution. Do not in
         self.remove_skill(str(app["name"]))
         if strategy == "bundled" and still_available:
             message = (
-                f"Removed {app['display_name']} from nanobot. {entry_point} "
-                "is still available because it is managed outside nanobot."
+                f"Removed {app['display_name']} from PRA. {entry_point} "
+                "is still available because it is managed outside PRA."
             )
         elif still_available:
             message = (

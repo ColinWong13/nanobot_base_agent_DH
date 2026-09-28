@@ -433,7 +433,7 @@ describe("Settings channels", () => {
     );
     finishInstall(installedPayload);
     expect(requestMutationMock).not.toHaveBeenCalledWith("settings.channel.connect.start", expect.anything(), expect.anything());
-    expect(await screen.findByText("Restart nanobot to apply updated channel support.")).toBeInTheDocument();
+    expect(await screen.findByText("Restart PRA to apply updated channel support.")).toBeInTheDocument();
     const installedGroup = await screen.findByRole("region", { name: "Requires dependencies" });
     expect(within(installedGroup).getByRole("switch", { name: "WhatsApp channel" })).toBeDisabled();
     expect(requestMutationMock.mock.calls.map(([action]) => action)).toEqual([

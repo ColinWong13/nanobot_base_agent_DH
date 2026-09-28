@@ -1105,7 +1105,7 @@ class TestMainMenuUpdate:
 
         assert onboard_wizard._quick_start_oauth_login(Config(), "openai_codex") is False
         assert messages == [
-            "[red]This nanobot installation is missing the required oauth-cli-kit package. "
+            "[red]This PRA installation is missing the required oauth-cli-kit package. "
             "Reinstall or upgrade nanobot-ai using the same installation method.[/red]"
         ]
 

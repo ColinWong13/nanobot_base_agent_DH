@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+import { BrandMark } from "@/components/BrandMark";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { DEFAULT_TRANSCRIPTION_SETTINGS } from "@/components/settings/capabilities/TranscriptionSettings";
 import type { SettingsSectionKey } from "@/components/settings/contracts";
@@ -136,15 +137,26 @@ export function OverviewSettings({
 export function AboutSettings({ currentVersion }: { currentVersion?: string }) {
   const { t } = useTranslation();
   const links = [
+    // Still points upstream: the fork has no docs site of its own, and the
+    // upstream wiki is the closest thing to one. Worth knowing that it
+    // describes upstream rather than this fork.
     { key: "documentation", icon: BookOpen, href: "https://nanobot.wiki/" },
-    { key: "sourceCode", icon: Github, href: "https://github.com/HKUDS/nanobot" },
-    { key: "reportIssue", icon: MessageCircle, href: "https://github.com/HKUDS/nanobot/issues" },
+    { key: "sourceCode", icon: Github, href: "https://github.com/ColinWong13/nanobot_base_agent_DH" },
+    { key: "reportIssue", icon: MessageCircle, href: "https://github.com/ColinWong13/nanobot_base_agent_DH/issues" },
   ];
   return (
     <div className="settings-stack">
       <div className="flex flex-col items-center gap-4 py-6 text-center">
-        <img src="/brand/nanobot_mark.svg" alt="" className="h-16 w-16 select-none" draggable={false} />
-        <h1><img src="/brand/nanobot_wordmark.svg" alt="nanobot" className="h-auto w-40 select-none dark:brightness-150" draggable={false} /></h1>
+        <BrandMark className="h-16 w-16 text-primary" />
+        {/* A text wordmark, not the retired SVG one: it translates, it takes
+            the theme's colours directly instead of needing the dark:brightness
+            filter the old image carried, and it costs no request. */}
+        <h1 className="flex flex-col items-center gap-1">
+          <span className="text-2xl font-semibold leading-none tracking-tight text-foreground">
+            {t("app.brand")}
+          </span>
+          <span className="text-xs text-muted-foreground">{t("app.brandFullName")}</span>
+        </h1>
         <VersionCheckRow currentVersion={currentVersion} />
       </div>
       <SettingsGroup>

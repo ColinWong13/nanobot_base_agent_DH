@@ -1626,7 +1626,7 @@ class TelegramChannel(BaseChannel):
             await self._send_pairing_code_if_private(sender_id, update.message, user)
             return
         await update.message.reply_text(
-            f"👋 Hi {user.first_name}! I'm nanobot.\n\n"
+            f"👋 Hi {user.first_name}! I'm PRA.\n\n"
             "Send me a message and I'll respond!\n"
             "Type /help to see available commands."
         )

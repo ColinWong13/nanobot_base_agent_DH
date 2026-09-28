@@ -285,9 +285,9 @@ def get_approved(channel: str) -> list[str]:
 def format_pairing_reply(code: str) -> str:
     """Return the pairing-code message sent to unrecognised DM senders."""
     return (
-        "Hi! This is your private nanobot.\n\n"
+        "Hi! This is your private PRA.\n\n"
         f"Your pairing code is: `{code}`\n\n"
-        "Open the nanobot WebUI and enter this code to pair your chat account.\n"
+        "Open the PRA WebUI and enter this code to pair your chat account.\n"
         f"Without the WebUI, approve it from an already paired chat with "
         f"`/pairing approve {code}`."
     )

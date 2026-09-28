@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" role="img" aria-label="PRA">
+  <title>PRA</title>
+  <!-- This file exists for the places that cannot use a React component: the
+       favicon, the PWA manifest, and the websocket channel icon inside the
+       Python package. src/components/BrandMark.tsx draws the same droplet
+       inline, where it can take currentColor and follow the app's own theme.
+       Keep the path in step with that one.
+
+       A favicon is the one place prefers-color-scheme is the right question
+       rather than the app's .dark class: the browser chrome around the icon
+       follows the OS setting, not the page. So the light value is MD3's
+       light primary and the dark one its dark primary. -->
+  <style>
+    path { fill: #6750A4; }
+    @media (prefers-color-scheme: dark) { path { fill: #D0BCFF; } }
+  </style>
+  <!-- Centres the droplet: bbox 36.86 x 42 at x 10.14..47, y 5..47, so it
+       shifts 3.572 left and 1 up to land on the viewBox centre. Keep in step
+       with BrandMark.tsx. -->
+  <g transform="translate(-3.572,-1)">
+    <path d="M16 5C21 11 26 15 32 16C41.5 17.5 47 24.5 47 33C47 41 40 47 31 47C21 47 12.5 40 10.5 30C9 21 12.5 11 16 5Z"/>
+  </g>
+</svg>

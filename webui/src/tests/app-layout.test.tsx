@@ -354,7 +354,7 @@ describe("App layout", () => {
 
     render(<App />);
 
-    expect(await screen.findByRole("heading", { level: 1, name: "Connect to nanobot" }))
+    expect(await screen.findByRole("heading", { level: 1, name: "Connect to PRA" }))
       .toBeInTheDocument();
     const password = screen.getByLabelText("WebUI password");
     expect(password).not.toHaveAttribute("aria-describedby");
@@ -382,7 +382,7 @@ describe("App layout", () => {
     await screen.findByRole("listbox");
     await user.keyboard("{ArrowDown}{Enter}");
 
-    expect(await screen.findByRole("heading", { name: "连接到 nanobot" }))
+    expect(await screen.findByRole("heading", { name: "连接到 PRA" }))
       .toBeInTheDocument();
     expect(screen.getByLabelText("WebUI 密码")).toHaveValue("draft-password");
     expect(screen.getByRole("button", { name: "连接", exact: true })).toBeEnabled();
@@ -490,7 +490,7 @@ describe("App layout", () => {
 
     render(<App />);
 
-    expect(await screen.findByRole("heading", { level: 1, name: "Connect to nanobot" }))
+    expect(await screen.findByRole("heading", { level: 1, name: "Connect to PRA" }))
       .toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(connectSpy).not.toHaveBeenCalled();
@@ -656,7 +656,7 @@ describe("App layout", () => {
     expect(await screen.findByRole("heading", { name: "Channels" })).toBeVisible();
     expect(window.location.hash).toBe("#/channels");
     expect(channels).toHaveAttribute("aria-current", "page");
-    expect(document.title).toBe("Channels · nanobot");
+    expect(document.title).toBe("Channels · PRA");
     fireEvent.click(within(sidebar).getByRole("button", { name: "New topic" }));
     await waitFor(() => expect(window.location.hash).toBe("#/new"));
     fireEvent.keyDown(window, { key: "$", code: "Digit4", ctrlKey: true, shiftKey: true });
@@ -750,7 +750,7 @@ describe("App layout", () => {
     expect(within(screen.getByTestId("thread-header")).getByText(
       "first private message",
     )).toBeInTheDocument();
-    await waitFor(() => expect(document.title).toBe("first private message · nanobot"));
+    await waitFor(() => expect(document.title).toBe("first private message · PRA"));
     expect(screen.queryByRole("button", { name: "Temporary chat" })).not.toBeInTheDocument();
 
     fireEvent.click(within(sidebar).getByRole("button", {
@@ -1172,7 +1172,7 @@ describe("App layout", () => {
       "aria-current",
       "page",
     );
-    expect(document.title).toBe("Skills · nanobot");
+    expect(document.title).toBe("Skills · PRA");
 
     fireEvent.click(screen.getByRole("button", { name: "Back to chat" }));
     expect(await screen.findByText(HERO_GREETING_PATTERN)).toBeInTheDocument();
@@ -1572,7 +1572,7 @@ describe("App layout", () => {
       "aria-current",
       "page",
     );
-    expect(document.title).toBe("Automations · nanobot");
+    expect(document.title).toBe("Automations · PRA");
 
   });
 
@@ -1857,7 +1857,7 @@ describe("App layout", () => {
     expect(screen.queryByText("近期无问题")).not.toBeInTheDocument();
     expect(screen.queryByText("Workspace automations")).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "刷新" })).not.toBeInTheDocument();
-    expect(document.title).toBe("自动任务 · nanobot");
+    expect(document.title).toBe("自动任务 · PRA");
   });
 
   it("resizes the sidebar, collapses at the drag threshold and restores its saved width", async () => {
@@ -2346,7 +2346,7 @@ describe("App layout", () => {
         chatId: "new",
         createdAt: "2026-04-15T12:00:00Z",
         updatedAt: "2026-04-15T12:00:00Z",
-        preview: "hi nanobot",
+        preview: "hi pra",
       },
       {
         key: "websocket:alpha",
@@ -2612,7 +2612,7 @@ describe("App layout", () => {
     render(<App />);
 
     await waitFor(() => expect(connectSpy).toHaveBeenCalled());
-    await waitFor(() => expect(document.title).toBe("Active after reload · nanobot"));
+    await waitFor(() => expect(document.title).toBe("Active after reload · PRA"));
     const sidebar = screen.getByRole("navigation", { name: "Sidebar navigation" });
     expect(
       within(sidebar).getByRole("button", { name: /^Active after reload$/ }),
@@ -2678,7 +2678,7 @@ describe("App layout", () => {
     expect(system.getByText("Timezone")).toBeInTheDocument();
     expect(within(screen.getByRole("complementary")).getByRole("button", { name: "Restart", exact: true })).toBeInTheDocument();
     expect(
-      system.queryByText("Restart nanobot to apply runtime changes."),
+      system.queryByText("Restart PRA to apply runtime changes."),
     ).not.toBeInTheDocument();
   });
 
@@ -2786,7 +2786,7 @@ describe("App layout", () => {
       "duration-200",
       "motion-reduce:animate-none",
     );
-    expect(document.title).toBe("Apps · nanobot");
+    expect(document.title).toBe("Apps · PRA");
 
     fireEvent.click(within(sidebar).getByRole("button", { name: "Skills" }));
 
@@ -2806,7 +2806,7 @@ describe("App layout", () => {
       "data-active-id",
       "utility:skills",
     );
-    expect(document.title).toBe("Skills · nanobot");
+    expect(document.title).toBe("Skills · PRA");
   });
 
   it("returns from settings to the blank start page when no session was active", async () => {
@@ -2941,7 +2941,7 @@ describe("App layout", () => {
     await waitFor(() => expect(connectSpy).toHaveBeenCalled());
     const sidebar = screen.getByRole("navigation", { name: "Sidebar navigation" });
     fireEvent.click(within(sidebar).getByRole("button", { name: "New topic" }));
-    await waitFor(() => expect(document.title).toBe("nanobot"));
+    await waitFor(() => expect(document.title).toBe("PRA"));
 
     fireEvent.click(within(sidebar).getByRole("button", { name: "Settings" }));
     expect(
@@ -2949,7 +2949,7 @@ describe("App layout", () => {
     ).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Back to chat" }));
 
-    await waitFor(() => expect(document.title).toBe("nanobot"));
+    await waitFor(() => expect(document.title).toBe("PRA"));
     expect(screen.getByText(HERO_GREETING_PATTERN)).toBeInTheDocument();
   });
 

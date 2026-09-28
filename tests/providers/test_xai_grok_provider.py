@@ -802,7 +802,7 @@ def test_client_version_rejection_explains_update_and_preserves_body() -> None:
     assert error.response_body == (
         '{"code":"upgrade-required","message":"Client version 0.2.109 is no longer supported"}'
     )
-    assert "xAI requires a newer Grok client version. Update nanobot and try again." in str(error)
+    assert "xAI requires a newer Grok client version. Update PRA and try again." in str(error)
     assert error.response_body in str(error)
     assert response.error_status_code == 426
     assert error.response_body in (response.content or "")

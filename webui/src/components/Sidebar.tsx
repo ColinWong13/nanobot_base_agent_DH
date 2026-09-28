@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+import { BrandMark } from "@/components/BrandMark";
 import {
   ChatList,
   type SidebarDeleteItem,
@@ -194,12 +195,11 @@ export function Sidebar(props: SidebarProps) {
               : "pointer-events-none",
           )}
         >
-          <img
-            src="/brand/nanobot_mark.svg"
-            alt=""
-            className="h-8 w-8 select-none object-contain"
-            draggable={false}
-          />
+          {/* Inline rather than the static file so the droplet takes
+              --primary: the mark and the accent colour then move together,
+              in both themes, with nothing to keep in step by hand. The
+              button above carries the label, so the mark stays decorative. */}
+          <BrandMark className="h-8 w-8 text-primary" />
         </button>
         {!collapsed && (
           <div className={cn("flex min-w-0 flex-1 items-center justify-end gap-1", props.hostChromeInset && "mt-5")}>

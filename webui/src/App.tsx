@@ -11,6 +11,7 @@ import {
 import { ArrowRight, ChevronDown, Eye, EyeOff, Moon, ShieldCheck, Sun, X } from "lucide-react";
 import { Trans, useTranslation } from "react-i18next";
 import { channelUiPresentation } from "@/channel-plugins/registry";
+import { BrandMark } from "@/components/BrandMark";
 import { Sidebar } from "@/components/Sidebar";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SidebarResizeHandle, SIDEBAR_MIN_WIDTH, SIDEBAR_MAX_WIDTH } from "@/components/SidebarResizeHandle";
@@ -427,14 +428,11 @@ function AuthForm({
           className="w-full max-w-xs"
         >
           <div className="text-center">
-            <img
-              src="/brand/nanobot_mark.svg"
-              alt=""
-              width={56}
-              height={56}
-              draggable={false}
-              className="mx-auto mb-5 h-14 w-14 select-none"
-            />
+            {/* The connection page is the first thing anyone sees, so the
+                mark here is the introduction rather than decoration -- but
+                the heading right below it is the accessible name, so this
+                stays aria-hidden and does not repeat it. */}
+            <BrandMark className="mx-auto mb-5 h-14 w-14 text-primary" />
             <h1 id="webui-auth-title" className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-[1.75rem]">
               {t("app.auth.title")}
             </h1>

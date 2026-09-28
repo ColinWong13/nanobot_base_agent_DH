@@ -1484,7 +1484,7 @@ class MCPProvider:
                 logger.warning("MCP hot reload could not read config: {}", exc)
                 return {
                     "ok": False,
-                    "message": "Could not reload MCP config. Restart nanobot to pick up changes.",
+                    "message": "Could not reload MCP config. Restart PRA to pick up changes.",
                     "requires_restart": True,
                     "error": str(exc),
                 }
@@ -1555,9 +1555,9 @@ class MCPProvider:
             elif unchanged:
                 message = "MCP config is already live."
             elif retry_missing and not added and not changed and not removed:
-                message = "MCP connections refreshed without restarting nanobot."
+                message = "MCP connections refreshed without restarting PRA."
             else:
-                message = "MCP config reloaded without restarting nanobot."
+                message = "MCP config reloaded without restarting PRA."
 
             logger.info(
                 "MCP hot reload: added={} changed={} removed={} retried={} "

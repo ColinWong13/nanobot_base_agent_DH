@@ -160,7 +160,7 @@ class ImageGenerationTool(Tool):
             )
         except WorkspaceBoundaryError as exc:
             raise ImageGenerationError(
-                "reference_images must be inside the workspace or nanobot media directory"
+                "reference_images must be inside the workspace or PRA media directory"
             ) from exc
         except OSError as exc:
             raise ImageGenerationError(f"reference image not found: {value}") from exc
@@ -266,7 +266,7 @@ async def reload_image_generation_tool(state: Any, registry: ToolRegistry) -> di
     )
     return {
         "ok": True,
-        "message": "Image generation settings applied without restarting nanobot.",
+        "message": "Image generation settings applied without restarting PRA.",
         "enabled": tool_config.enabled,
         "provider": tool_config.provider,
         "model": tool_config.model,

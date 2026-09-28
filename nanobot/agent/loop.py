@@ -796,7 +796,7 @@ class AgentLoop:
         metadata = dict(ctx.msg.metadata or {})
         tool = self.tools.get("exec")
         if tool is None:
-            content = "Shell execution is disabled in this nanobot configuration."
+            content = "Shell execution is disabled in this PRA configuration."
         else:
             session = ctx.session or self.sessions.get_or_create(ctx.key)
             scope = self.workspace_scopes.for_turn(

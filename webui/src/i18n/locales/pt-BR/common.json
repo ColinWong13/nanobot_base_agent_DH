@@ -1,19 +1,20 @@
 {
   "app": {
-    "brand": "nanobot",
+    "brand": "PRA",
+    "brandFullName": "assistente pessoal de pesquisa",
     "loading": {
-      "connecting": "Conectando-se ao nanobot…",
-      "boot": "Carregando nanobot…"
+      "connecting": "Conectando-se ao PRA…",
+      "boot": "Carregando PRA…"
     },
     "error": {
-      "title": "Não foi possível conectar-se com o nanobot",
+      "title": "Não foi possível conectar-se com o PRA",
       "gatewayHint": "Verifique se o gateway está em execução (`nanobot gateway`) e se este navegador consegue acessar o endereço da WebUI."
     },
     "auth": {
-      "title": "Conectar ao nanobot",
+      "title": "Conectar ao PRA",
       "label": "Senha da WebUI",
       "helpTitle": "Onde encontro a senha?",
-      "helpConfig": "No dispositivo que executa o nanobot, abra o arquivo de configuração, geralmente em:",
+      "helpConfig": "No dispositivo que executa o PRA, abra o arquivo de configuração, geralmente em:",
       "helpSecret": "Copie o valor deste campo como senha:",
       "helpFallback": "Se esse valor estiver vazio, use <code>channels.websocket.token</code>.",
       "showPassword": "Mostrar senha",
@@ -29,10 +30,10 @@
     },
     "system": {
       "section": "Sistema",
-      "restartHint": "Reinicie o nanobot para aplicar as alterações de tempo de execução.",
+      "restartHint": "Reinicie o PRA para aplicar as alterações de tempo de execução.",
       "restartAction": "Reiniciar",
-      "restart": "Reiniciar nanobot",
-      "restarting": "Reiniciando nanobot...",
+      "restart": "Reiniciar PRA",
+      "restarting": "Reiniciando PRA...",
       "restartEngine": "Reiniciar motor",
       "restartingEngine": "Reiniciando motor..."
     },
@@ -40,11 +41,11 @@
       "completed": "Reinício concluído em {{seconds}}s."
     },
     "documentTitle": {
-      "base": "nanobot",
-      "chat": "{{title}} · nanobot"
+      "base": "PRA",
+      "chat": "{{title}} · PRA"
     },
     "meta": {
-      "description": "Interface web do nanobot — converse com o seu espaço de trabalho do nanobot."
+      "description": "Interface web do PRA — converse com o seu assistente pessoal de pesquisa."
     },
     "pairing": {
       "title": "Parear sua conta de chat",
@@ -153,7 +154,7 @@
     "timezoneNoMatches": "Nenhum fuso horário encontrado.",
     "configure": "Configurar",
     "exit": {
-      "title": "Reiniciar o nanobot antes de sair das configurações?",
+      "title": "Reiniciar o PRA antes de sair das configurações?",
       "description": "As alterações foram salvas. Reinicie para aplicá-las.",
       "later": "Reiniciar mais tarde"
     },
@@ -200,7 +201,7 @@
         "gateway_restart_mode": {"label": "Modo de reinicialização", "help": "Método de reinicialização do processo. O modo automático depende do ambiente do host."},
         "api_host": {"label": "Endereço de escuta da API", "help": "É necessária uma chave de API para receber conexões em um endereço diferente de localhost. Configure a chave em Sistema e reinicie o serviço de API para aplicar as alterações."},
         "api_timeout": {"label": "Tempo limite das solicitações API (segundos)", "help": "Duração máxima das solicitações. Reinicie o serviço de API para aplicar as alterações."},
-        "tools_image_generation_save_dir": {"label": "Pasta das imagens geradas", "help": "Caminho relativo dentro da pasta de mídia do nanobot. As imagens existentes não são movidas."}
+        "tools_image_generation_save_dir": {"label": "Pasta das imagens geradas", "help": "Caminho relativo dentro da pasta de mídia do PRA. As imagens existentes não são movidas."}
       },
       "groups": {
         "chat": {"title": "Permissões de chat WebUI", "help": "Acesso a serviços locais e permissões padrão das conversas."},
@@ -222,7 +223,7 @@
         "applications": {"title": "Aplicativos de linha de comando", "help": ""}
       },
       "save": "Salvar alterações", "saving": "Salvando…", "discard": "Descartar alterações", "saved": "Salvo.",
-      "restart": "Reiniciar nanobot", "restartHelp": "Reinicie para aplicar as alterações. Os argumentos de linha de comando e as variáveis de ambiente podem ter prioridade.",
+      "restart": "Reiniciar PRA", "restartHelp": "Reinicie para aplicar as alterações. Os argumentos de linha de comando e as variáveis de ambiente podem ter prioridade.",
       "search": "Buscar uma configuração avançada", "noResults": "Nenhuma configuração correspondente.", "pending": "Alterações não salvas",
       "numberError": "Digite um número válido dentro do intervalo permitido.", "activeModel": "Usar o modelo ativo", "none": "Nenhum",
       "auto": "Automático", "manual": "Manual", "standard": "Padrão", "persistent": "Contínuo",
@@ -339,7 +340,7 @@
       "language": "Idioma",
       "provider": "Provedor",
       "model": "Modelo",
-      "restart": "Reiniciar nanobot",
+      "restart": "Reiniciar PRA",
       "configPath": "Arquivo de configuração",
       "activePreset": "Predefinição ativa",
       "gateway": "Gateway",
@@ -409,7 +410,7 @@
       "defaultImageSize": "Tamanho de imagem solicitado aos provedores compatíveis.",
       "maxImagesPerTurn": "Número máximo de imagens geradas por solicitação.",
       "timezone": "Usado para agendamentos e respostas sensíveis ao horário.",
-      "cliAppsCatalog": "Instala as ferramentas de linha de comando que o nanobot pode usar neste computador. Os aplicativos para desktop não são alterados.",
+      "cliAppsCatalog": "Instala as ferramentas de linha de comando que o PRA pode usar neste computador. Os aplicativos para desktop não são alterados.",
       "cliAppsFilter": "Busque por aplicativo, categoria ou capacidade.",
       "localServiceAccess": "Permite que comandos shell com acesso completo alcancem serviços locais.",
       "webuiDefaultAccess": "Usado por chats web sem permissão específica de projeto.",
@@ -459,7 +460,7 @@
       "readyStatus": "Pronto",
       "readyTry": "Experimentar @{{name}}",
       "readyCopied": "Copiado",
-      "readyPrompt": "Peça ao nanobot para usar @{{name}} nesta tarefa.",
+      "readyPrompt": "Peça ao PRA para usar @{{name}} nesta tarefa.",
       "openChat": "Abrir conversa",
       "unsupported": "Não compatível",
       "unavailable": "Indisponível",
@@ -472,7 +473,7 @@
       "version": "Versão",
       "checking": "Verificando...",
       "checkForUpdates": "Verificar atualizações",
-      "upToDate": "O nanobot está atualizado",
+      "upToDate": "O PRA está atualizado",
       "updateAvailable": "Atualização disponível v{{version}}"
     },
     "mcp": {
@@ -506,7 +507,7 @@
       "saveCustom": "Salvar servidor",
       "configImport": "Importar mcp.json",
       "importConfig": "Importar",
-      "restartRequired": "Reinicie o nanobot para conectar as ferramentas MCP atualizadas.",
+      "restartRequired": "Reinicie o PRA para conectar as ferramentas MCP atualizadas.",
       "toolsFound_one": "{{count}} ferramenta",
       "toolsFound_other": "{{count}} ferramentas",
       "toolsFound": "{{count}} ferramentas",
@@ -536,14 +537,14 @@
       "preparingSignIn": "Preparando login seguro…",
       "openSignInToContinue": "Abra a página de login para continuar.",
       "finishSignInInBrowser": "Conclua o login na janela do navegador.",
-      "manualCallbackRequired": "Conclua o login e cole a URL de callback no nanobot.",
+      "manualCallbackRequired": "Conclua o login e cole a URL de callback no PRA.",
       "manualCallbackHelp": "Depois de autorizar o acesso, a página localhost não será carregada. Copie a URL completa da barra de endereços e cole-a aqui.",
       "finishingConnection": "Finalizando conexão…",
       "activatingTools": "Ativando ferramentas…",
       "connected": "Conectado.",
       "connectionFailed": "Falha na conexão.",
       "connectionCancelled": "Conexão cancelada.",
-      "reloadFailed": "Login concluído, mas o nanobot não conseguiu conectar as ferramentas. Tente reiniciar o nanobot.",
+      "reloadFailed": "Login concluído, mas o PRA não conseguiu conectar as ferramentas. Tente reiniciar o PRA.",
       "oauthFailed": "Não foi possível conectar. Tente fazer login novamente.",
       "statusMissingDependency": "Dependência necessária",
       "statusComingSoon": "Em breve",
@@ -627,11 +628,11 @@
       "loadError": "Não foi possível carregar as configurações",
       "unsaved": "Alterações não salvas.",
       "upToDate": "Atualizado.",
-      "savedRestart": "Salvo. Reinicie o nanobot para aplicar as alterações.",
+      "savedRestart": "Salvo. Reinicie o PRA para aplicar as alterações.",
       "restartAfterSaving": "Salve as alterações e reinicie quando estiver pronto.",
-      "savedRestartApply": "Salvo. Reinicie o nanobot para aplicar as alterações.",
-      "imageProviderRestart": "Provedor de imagens salvo. Reinicie o nanobot para aplicar as alterações.",
-      "hostRestartAfterSaving": "Ao salvar, o nanobot reiniciará o motor.",
+      "savedRestartApply": "Salvo. Reinicie o PRA para aplicar as alterações.",
+      "imageProviderRestart": "Provedor de imagens salvo. Reinicie o PRA para aplicar as alterações.",
+      "hostRestartAfterSaving": "Ao salvar, o PRA reiniciará o motor.",
       "hostRestartPending": "Salvo. O motor será reiniciado quando estiver pronto.",
       "hostApiUnavailable": "Estas ações estão disponíveis apenas no aplicativo para desktop.",
       "logsOpened": "Pasta de logs aberta.",
@@ -826,12 +827,12 @@
     },
     "observability": {
       "title": "Observabilidade",
-      "configured": "As credenciais de rastreamento estão disponíveis para o nanobot.",
-      "environment": "Defina LANGFUSE_SECRET_KEY e LANGFUSE_PUBLIC_KEY e reinicie o nanobot.",
+      "configured": "As credenciais de rastreamento estão disponíveis para o PRA.",
+      "environment": "Defina LANGFUSE_SECRET_KEY e LANGFUSE_PUBLIC_KEY e reinicie o PRA.",
       "enable": "Ativar rastreamento"
     },
     "apps": {
-      "description": "Adicione ferramentas ao nanobot e mencione-as com @ na conversa.",
+      "description": "Adicione ferramentas ao PRA e mencione-as com @ na conversa.",
       "cliLabel": "Aplicativo",
       "mcpLabel": "MCP",
       "channelLabel": "Canal",
@@ -854,10 +855,10 @@
       "browseApps": "Explorar aplicativos",
       "browseIntegrations": "Explorar ferramentas MCP",
       "emptyIntegrationsHint": "Adicione um servidor MCP personalizado abaixo.",
-      "restartRequired": "Reinicie o nanobot para aplicar os aplicativos e ferramentas MCP atualizados."
+      "restartRequired": "Reinicie o PRA para aplicar os aplicativos e ferramentas MCP atualizados."
     },
     "channels": {
-      "description": "Conecte aplicativos de chat, e-mail e WebUI ao nanobot.",
+      "description": "Conecte aplicativos de chat, e-mail e WebUI ao PRA.",
       "caption": "{{enabled}} em execução · {{total}} canais",
       "searchPlaceholder": "Buscar canais",
       "backToChannels": "Todos os canais",
@@ -865,7 +866,7 @@
       "help": "Ajuda",
       "loading": "Carregando canais...",
       "empty": "Nenhum canal corresponde a este filtro.",
-      "restartRequired": "Reinicie o nanobot para aplicar o suporte de canais atualizado.",
+      "restartRequired": "Reinicie o PRA para aplicar o suporte de canais atualizado.",
       "requires": "Requer: {{requirements}}",
       "setUp": "Configurar",
       "setupGuide": "Guia de configuração",
@@ -962,8 +963,8 @@
       "missingDependency": "Dependências ausentes",
       "installSupport": "Instalar dependências",
       "installConfirmTitle": "Instalar as dependências de {{name}}?",
-      "installConfirmDescription": "O nanobot instalará as dependências necessárias e ativará {{name}}.",
-      "installOnlyConfirmDescription": "O nanobot instalará o que {{name}} precisa. Você poderá conectá-lo após a instalação.",
+      "installConfirmDescription": "O PRA instalará as dependências necessárias e ativará {{name}}.",
+      "installOnlyConfirmDescription": "O PRA instalará o que {{name}} precisa. Você poderá conectá-lo após a instalação.",
       "installConfirmAction": "Instalar e habilitar",
       "installOnlyConfirmAction": "Instalar suporte",
       "websocketRequired": "Necessário para a WebUI",
@@ -982,7 +983,7 @@
         "noOutput": "Este registro não inclui o texto da resposta."
       },
       "create": "Criar automação",
-      "createPrompt": "O que você gostaria de automatizar com o nanobot?",
+      "createPrompt": "O que você gostaria de automatizar com o PRA?",
       "createInput": "Descreva uma automação",
       "errors": {
         "legacyMissingDestination": "Esta automação antiga não tem um destino de entrega. Recrie-a na conversa vinculada para continuar."
@@ -1031,7 +1032,7 @@
       "loading": "Carregando automações...",
       "noMatches": "Nenhuma automação corresponde a esta visualização.",
       "empty": "Nenhuma automação ainda.",
-      "emptyHint": "Diga ao nanobot em uma conversa o que você quer que ele faça e quando.",
+      "emptyHint": "Diga ao PRA em uma conversa o que você quer que ele faça e quando.",
       "emptyAction": "Abrir uma conversa",
       "clearFilters": "Limpar filtros",
       "oneShot": "Uma vez",
@@ -1142,7 +1143,7 @@
       "signedInAs": "Conectado como {{account}}",
       "signInHelp": "Entre por este dispositivo. Nenhuma chave de API é salva na configuração.",
       "remoteSignInHelp": "Selecione Entrar para abrir a xAI no seu computador e depois cole o código de autorização exibido após o login.",
-      "codexRemoteSignInHelp": "Entre por este navegador e cole no nanobot a URL completa de callback do localhost.",
+      "codexRemoteSignInHelp": "Entre por este navegador e cole no PRA a URL completa de callback do localhost.",
       "signInRequired": "Login necessário",
       "signInBeforeSaving": "Entre neste provedor antes de salvar a predefinição.",
       "signedIn": "Conectado",
@@ -1150,9 +1151,9 @@
       "proxyLabel": "Proxy de rede",
       "proxySaveBeforeSignIn": "Salve as alterações do proxy antes de entrar.",
       "saveProxy": "Salvar proxy",
-      "localCodeHelp": "Conclua o login no navegador. O nanobot geralmente termina automaticamente; caso contrário, cole o código de autorização abaixo.",
+      "localCodeHelp": "Conclua o login no navegador. O PRA geralmente termina automaticamente; caso contrário, cole o código de autorização abaixo.",
       "remoteCodeHelp": "Selecione Entrar para abrir a xAI no seu computador. Após o login, cole abaixo o código de autorização exibido pela xAI.",
-      "localCallbackHelp": "Conclua o login no navegador. O nanobot geralmente termina automaticamente; caso contrário, copie da barra de endereço a URL completa de callback do localhost e cole abaixo.",
+      "localCallbackHelp": "Conclua o login no navegador. O PRA geralmente termina automaticamente; caso contrário, copie da barra de endereço a URL completa de callback do localhost e cole abaixo.",
       "remoteCallbackHelp": "Abra o ChatGPT neste navegador e conclua o login. Quando a página localhost não carregar, copie a URL completa da barra de endereço e cole abaixo.",
       "authorizationCode": "Código de autorização",
       "callbackUrl": "URL completa de callback",
@@ -1195,7 +1196,7 @@
       "deleteConfirmAction": "Excluir habilidade",
       "instructionsTitle": "Instruções da habilidade",
       "setupRequired": "Requer configuração",
-      "setupDescription": "Instale a dependência ausente na máquina que executa o nanobot e verifique novamente.",
+      "setupDescription": "Instale a dependência ausente na máquina que executa o PRA e verifique novamente.",
       "copySetupCommand": "Copiar comando de configuração",
       "checkAgain": "Verificar novamente",
       "marketplaceSearchFailed": "Não foi possível pesquisar nos mercados de habilidades.",
@@ -1378,7 +1379,7 @@
       "imageQuickActions": {
         "icon": {
           "title": "Desenhar um ícone de aplicativo",
-          "prompt": "Gere um ícone de aplicativo 1:1 limpo para o nanobot: robô amigável, estilo vetorial simples, paleta suave em azul e branco, sem texto."
+          "prompt": "Gere um ícone de aplicativo 1:1 limpo para o PRA: robô amigável, estilo vetorial simples, paleta suave em azul e branco, sem texto."
         },
         "sticker": {
           "title": "Criar um sticker",
@@ -1545,7 +1546,7 @@
             "description": "Cancela o turno ativo do agente nesta conversa."
           },
           "restart": {
-            "title": "Reiniciar nanobot",
+            "title": "Reiniciar PRA",
             "description": "Reinicia o processo do bot no mesmo lugar."
           },
           "status": {
@@ -1599,14 +1600,14 @@
         "label": "Aplicativos",
         "cliGroup": "Aplicativos CLI",
         "mcpGroup": "Serviços MCP",
-        "sessionGroup": "Conversas do Nanobot",
+        "sessionGroup": "Conversas do PRA",
         "cliBadge": "CLI",
         "mcpBadge": "MCP",
         "cliDescription": "Usar @{{name}} como aplicativo CLI local",
         "mcpDescription": "Usar @{{name}} como servidor MCP",
         "cliTitle": "Aplicativo CLI: {{name}}",
         "mcpTitle": "Servidor MCP: {{name}}",
-        "sessionBadge": "Conversa do Nanobot",
+        "sessionBadge": "Conversa do PRA",
         "sessionDescription": "Referenciar @{{name}} como chat anterior"
       },
       "encoding": "Codificando…",
@@ -1746,7 +1747,7 @@
     "close": "Fechar pré-visualização de arquivo",
     "loading": "Carregando pré-visualização...",
     "failed": "Não foi possível pré-visualizar este arquivo.",
-    "routeMissing": "A pré-visualização de arquivo precisa do gateway mais recente. Reinicie o nanobot gateway e tente novamente.",
+    "routeMissing": "A pré-visualização de arquivo precisa do gateway mais recente. Reinicie o gateway e tente novamente.",
     "resize": "Redimensionar pré-visualização de arquivo",
     "truncated": "A pré-visualização foi truncada porque este arquivo é grande."
   },
