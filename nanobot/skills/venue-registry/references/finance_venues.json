@@ -1,0 +1,42 @@
+{
+  "_comment": "Verified finance/economics venue seed for the 'finance' domain. Every ISSN here was confirmed against OpenAlex sources (scripts/verify_issns.py, 27/27 resolved). Tier provenance is recorded per entry in 'tier_source' rather than asserted uniformly.",
+  "_tier_legend": {
+    "A*": "FT50 AND UTD24 — the strongest tier, list-verified",
+    "A": "FT50, not UTD24 — list-verified",
+    "B": "Recognised field journal; tier is editorial, NOT verified against ABS/FT50/UTD24",
+    "-": "Unknown — deliberately blank rather than guessed"
+  },
+  "verified_on": "2026-09-27",
+  "venues": [
+    { "name": "Journal of Finance", "issn": "0022-1082", "tier": "A*", "tier_source": "ft50+utd24" },
+    { "name": "Journal of Financial Economics", "issn": "0304-405X", "tier": "A*", "tier_source": "ft50+utd24" },
+    { "name": "Review of Financial Studies", "issn": "0893-9454", "tier": "A*", "tier_source": "ft50+utd24" },
+
+    { "name": "Journal of Financial and Quantitative Analysis", "issn": "0022-1090", "tier": "A", "tier_source": "ft50" },
+    { "name": "Review of Finance", "issn": "1572-3097", "tier": "A", "tier_source": "ft50" },
+    { "name": "Journal of Business Ethics", "issn": "0167-4544", "tier": "A", "tier_source": "ft50" },
+
+    { "name": "American Economic Review", "issn": "0002-8282", "tier": "A", "tier_source": "ft50" },
+    { "name": "Econometrica", "issn": "0012-9682", "tier": "A", "tier_source": "ft50" },
+    { "name": "Journal of Political Economy", "issn": "0022-3808", "tier": "A", "tier_source": "ft50" },
+    { "name": "Quarterly Journal of Economics", "issn": "0033-5533", "tier": "A", "tier_source": "ft50" },
+    { "name": "Review of Economic Studies", "issn": "0034-6527", "tier": "A", "tier_source": "ft50" },
+
+    { "name": "Journal of Money, Credit and Banking", "issn": "0022-2879", "tier": "B", "tier_source": "field" },
+    { "name": "Journal of Financial Intermediation", "issn": "1042-9573", "tier": "B", "tier_source": "field" },
+    { "name": "Journal of Corporate Finance", "issn": "0929-1199", "tier": "B", "tier_source": "field" },
+    { "name": "Journal of Banking & Finance", "issn": "0378-4266", "tier": "B", "tier_source": "field" },
+    { "name": "Financial Management", "issn": "0046-3892", "tier": "B", "tier_source": "field" },
+    { "name": "Journal of Financial Markets", "issn": "1386-4181", "tier": "B", "tier_source": "field" },
+    { "name": "Journal of Empirical Finance", "issn": "0927-5398", "tier": "B", "tier_source": "field" },
+    { "name": "Journal of International Money and Finance", "issn": "0261-5606", "tier": "B", "tier_source": "field" },
+    { "name": "Review of Asset Pricing Studies", "issn": "2045-9920", "tier": "B", "tier_source": "field" },
+    { "name": "Review of Corporate Finance Studies", "issn": "2046-9128", "tier": "B", "tier_source": "field" },
+    { "name": "Journal of Financial Stability", "issn": "1572-3089", "tier": "B", "tier_source": "field" },
+    { "name": "Mathematical Finance", "issn": "0960-1627", "tier": "B", "tier_source": "field" },
+    { "name": "Finance and Stochastics", "issn": "0949-2984", "tier": "B", "tier_source": "field" },
+    { "name": "Journal of Financial Econometrics", "issn": "1479-8409", "tier": "B", "tier_source": "field" },
+    { "name": "Journal of Risk and Uncertainty", "issn": "0895-5646", "tier": "B", "tier_source": "field" },
+    { "name": "Journal of Monetary Economics", "issn": "0304-3932", "tier": "B", "tier_source": "field" }
+  ]
+}

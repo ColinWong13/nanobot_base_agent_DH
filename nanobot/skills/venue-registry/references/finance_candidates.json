@@ -1,0 +1,32 @@
+{
+  "_comment": "Candidate finance/economics journals for the 'finance' domain. Every ISSN here is a PROPOSAL and must be verified against OpenAlex by scripts/verify_issns.py before it lands in registry/domains.json. 'tier_claim' is the list membership this journal is believed to hold; 'tier' is deliberately left as '-' until verified, per the plan's rule: never guess a tier.",
+  "candidates": [
+    { "name": "Journal of Finance", "issn": "0022-1082", "tier_claim": "FT50+UTD24+ABS4*" },
+    { "name": "Journal of Financial Economics", "issn": "0304-405X", "tier_claim": "FT50+UTD24+ABS4*" },
+    { "name": "Review of Financial Studies", "issn": "0893-9454", "tier_claim": "FT50+UTD24+ABS4*" },
+    { "name": "Journal of Financial and Quantitative Analysis", "issn": "0022-1090", "tier_claim": "UTD24+ABS4" },
+    { "name": "Review of Finance", "issn": "1572-3097", "tier_claim": "FT50+ABS4" },
+    { "name": "Journal of Money, Credit and Banking", "issn": "0022-2879", "tier_claim": "FT50" },
+    { "name": "Journal of Financial Intermediation", "issn": "1042-9573", "tier_claim": "ABS4" },
+    { "name": "Journal of Corporate Finance", "issn": "0929-1199", "tier_claim": "ABS4" },
+    { "name": "Journal of Banking & Finance", "issn": "0378-4266", "tier_claim": "ABS3" },
+    { "name": "Financial Management", "issn": "0046-3892", "tier_claim": "ABS3" },
+    { "name": "Journal of Financial Markets", "issn": "1386-4181", "tier_claim": "ABS3" },
+    { "name": "Journal of Empirical Finance", "issn": "0927-5398", "tier_claim": "ABS3" },
+    { "name": "Journal of International Money and Finance", "issn": "0261-5606", "tier_claim": "ABS3" },
+    { "name": "Review of Asset Pricing Studies", "issn": "2045-9920", "tier_claim": "ABS3" },
+    { "name": "Review of Corporate Finance Studies", "issn": "2046-9128", "tier_claim": "ABS3" },
+    { "name": "Journal of Financial Stability", "issn": "1572-3089", "tier_claim": "ABS3" },
+    { "name": "Mathematical Finance", "issn": "0960-1627", "tier_claim": "ABS3" },
+    { "name": "Finance and Stochastics", "issn": "0949-2984", "tier_claim": "ABS3" },
+    { "name": "Journal of Business Ethics", "issn": "0167-4544", "tier_claim": "FT50" },
+    { "name": "American Economic Review", "issn": "0002-8282", "tier_claim": "econ-top5" },
+    { "name": "Quarterly Journal of Economics", "issn": "0033-5533", "tier_claim": "econ-top5" },
+    { "name": "Journal of Political Economy", "issn": "0022-3808", "tier_claim": "econ-top5" },
+    { "name": "Econometrica", "issn": "0012-9682", "tier_claim": "econ-top5" },
+    { "name": "Review of Economic Studies", "issn": "0034-6527", "tier_claim": "econ-top5" },
+    { "name": "Journal of Monetary Economics", "issn": "0304-3932", "tier_claim": "econ-field" },
+    { "name": "Journal of Financial Econometrics", "issn": "1479-8409", "tier_claim": "ABS3" },
+    { "name": "Journal of Risk and Uncertainty", "issn": "0895-5646", "tier_claim": "ABS3" }
+  ]
+}

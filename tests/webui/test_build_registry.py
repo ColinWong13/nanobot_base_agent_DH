@@ -5,8 +5,10 @@ its failure mode is silent: a bug does not raise, it just drops a venue, a tier
 or a checkbox, and the next `normalize.py` run tiers papers off the reduced
 list. Until this file existed it had no test anywhere.
 
-The script lives outside the package, in the user's workspace, so it is loaded
-by path and every test skips cleanly when that workspace is absent.
+The script ships inside the package, so it is loaded by path and the repository
+copy is preferred. It is still allowed to live in the user's workspace, where it
+would shadow the built-in at runtime -- an older checkout has only that, and a
+workspace copy is loaded when the repository one is missing.
 
 **The live registry is Colin's curated data.** Every test points the module at
 ``tmp_path``; ``_guard_live_registry`` fails the session if one ever forgets.
@@ -27,6 +29,23 @@ def _workspace_root() -> Path:
 
 
 def _script_path() -> Path:
+    """Where the rebuilder lives, repository copy first.
+
+    The repository copy is the one under version control and the one a user
+    runs; the workspace copy is what shadows the built-in at runtime on a
+    machine that keeps its own, and is still accepted so a checkout predating
+    the move keeps testing something rather than silently skipping.
+    """
+    repo_copy = (
+        Path(__file__).resolve().parents[2]
+        / "nanobot"
+        / "skills"
+        / "venue-registry"
+        / "scripts"
+        / "build_registry.py"
+    )
+    if repo_copy.is_file():
+        return repo_copy
     return _workspace_root() / "skills" / "venue-registry" / "scripts" / "build_registry.py"
 
 
