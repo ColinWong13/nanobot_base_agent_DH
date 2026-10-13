@@ -78,11 +78,11 @@ It matches on the tool *call*, not on anything the tool returned, so the
 agent's own memory-consolidation sessions do not show up as research you did.
 
 > [!IMPORTANT]
-> **This repository contains the reader, not the pipeline.** The skills that
-> *produce* those cards — fetching from arXiv and OpenAlex, summarising, writing
-> the frontmatter — are workspace skills, and they are not in this repository.
-> Out of the box the knowledge page reads whatever cards you already have. With
-> no vault, it is empty, and that is the correct behaviour rather than a bug.
+> **The pipeline ships with the app.** Fetching from arXiv and OpenAlex,
+> summarising, writing the frontmatter and maintaining the registry all live
+> under [`nanobot/skills/`](nanobot/skills/) — see [The skills](#the-skills).
+> What the knowledge page needs from you is a vault for them to write into.
+> With none configured it says so, rather than showing an empty page.
 
 ### The domains and venue registry
 
@@ -117,10 +117,11 @@ To be clear about what that buys you:
   next rebuild, and the code and the page both say so.
 
 > [!NOTE]
-> The program that rebuilds the registry is **not in this repository** — it is
-> a workspace skill (`venue-registry/scripts/build_registry.py`), as is the
-> CCF rankings dataset it can build from. This repository serves and edits the
-> registry; producing one is the workspace's job.
+> The program that rebuilds the registry ships as a skill —
+> `venue-registry/scripts/build_registry.py` — along with the CCF rankings
+> dataset it can build from, `ccf-rank/references/2026/rankings.json`. The
+> registry *file* is still yours: it is not committed, and a fresh install has
+> none until you or the agent makes one.
 
 ### The graph
 
@@ -146,6 +147,45 @@ long-term memory mid-conversation, instead of waiting for the automatic
 consolidation pass. The note is tagged — `skip`, `correction`, `permanent`,
 `durable` or `ephemeral` — because the consolidation pass routes on those tags.
 It is offered only in the main conversation, never to a subagent.
+
+### The skills
+
+Twelve skills ship in [`nanobot/skills/`](nanobot/skills/), beside the eleven
+upstream ones. They are what actually *do* the research — the pages above only
+display what these produce.
+
+| Skill | What it does |
+|---|---|
+| `literature-search` | The pipeline itself. Owns `paperctl.py` and the card contracts. |
+| `literature-search-arxiv` | Search arXiv; metadata and abstracts. |
+| `literature-search-openalex` | Query OpenAlex; papers, authors, venues, bibliometrics. |
+| `systematic-literature-review` | Run a review end to end into `20-Reviews/`. |
+| `venue-registry` | Build and maintain the domain registry. |
+| `ccf-rank` | Query the bundled CCF venue rankings. |
+| `weekly-digest` | Write `30-Weekly/`; on a cron by default. |
+| `obsidian-markdown` | Obsidian Flavored Markdown syntax. |
+| `obsidian-ops` | Driving Obsidian through its CLI apps. |
+| `cli-qr-auth` | Finishing a CLI login over chat. |
+| `feishu-cli-ops` | `lark-cli` operational notes. |
+| `wecom-cli-ops` | `wecom-cli` operational notes. |
+
+Three of them document third-party CLI apps and do nothing unless you have those
+apps installed. The rest need only Python and a vault.
+
+**A workspace skill shadows a built-in one of the same name.** To change one of
+these, copy it to `~/.nanobot/workspace/skills/<name>/` and edit the copy: your
+version wins, and updating the package will not overwrite it. This is also how
+you would replace one outright.
+
+> [!WARNING]
+> **The bundled CCF dataset is known to be damaged.** Of its 678 entries, around
+> 65 carry venue names broken by PDF extraction — an abbreviation split across a
+> line break, leaving entries named `Natural`, `Computer`, `Journal` and `Ad`.
+> It ships as-is rather than silently patched, and
+> `venue-registry/scripts/build_registry.py` hand-repairs the ones that matter.
+> If a venue name looks like a fragment of a longer one, it is. The dataset can
+> be rebuilt from CCF's own published list with
+> `ccf-rank/scripts/build_ccf_dataset.py`.
 
 ## The interface
 
@@ -179,12 +219,15 @@ Being honest about the edges:
 
 - The knowledge index is built against one particular vault layout, described
   above. It is not generalised, and it will not guess at yours.
-- The pipeline that produces paper cards is not in this repository (see the
-  note above). What is here reads cards; it does not make them.
-- `OBSIDIAN_VAULT` defaults to the path on the author's own machine. If you are
-  not the author, **you must set it**.
-- The registry ships empty by design. There is no bundled ranking dataset, and
-  the program that builds one is a workspace skill, not repo code.
+- The pipeline that produces paper cards ships as skills, but nothing runs it
+  for you. Cards appear when you ask for a search, or when you put the weekly
+  job on a cron.
+- `OBSIDIAN_VAULT` has **no default**. A vault is your directory and there is no
+  path that could be right for anyone but its owner; unset, the knowledge page
+  says so instead of reading somewhere that is not there.
+- The registry **file** ships empty by design — it is yours, and it is not
+  committed. The program that builds one and the dataset it reads both ship.
+- The bundled CCF rankings dataset has known extraction damage, described above.
 - The `confirmed` flag on a domain records that you read the list. It gates
   nothing.
 - The interface is fully localised, but the research layer's vocabulary is not.
@@ -282,7 +325,8 @@ Two things to know before you read the results:
 
 ## Configuration
 
-Everything lives under `~/.nanobot/`:
+Three things are yours to fill in. The repository ships no API keys, no channel
+credentials and no vault path. Everything lives under `~/.nanobot/`:
 
 | Path | What it is |
 |---|---|
@@ -291,14 +335,47 @@ Everything lives under `~/.nanobot/`:
 | `~/.nanobot/workspace/registry/domains.json` | the domains and venue registry |
 | `~/.nanobot/workspace/skills/` | workspace skills — not under version control |
 
-Point the knowledge index at your vault:
+### Your model
+
+**Settings → Models**, or `agents.defaults` in `config.json`. These providers
+are upstream's — Anthropic, OpenAI-compatible, OpenAI Responses, Azure,
+Bedrock, GitHub Copilot, or a local endpoint — and so is their configuration.
+[Upstream's README](docs/upstream-nanobot.md) is the reference for it, and it is
+accurate here because none of that code changed.
+
+Open Settings → Models, paste a key, pick a model, send `Hello!`. You should not
+have to edit JSON to get one reply.
+
+### Your channels
+
+The same: every channel is upstream's. Configure them in **Settings →
+Channels**, or under `channels` in `config.json`; upstream's documentation under
+[`docs/`](docs/) covers each one, credentials and webhooks included.
+
+Nothing is enabled until you enable it. A fresh install reaches you through the
+WebUI and nowhere else.
+
+### Your vault
+
+The one setting this fork adds.
 
 ```bash
 export OBSIDIAN_VAULT="/path/to/your/vault"
 ```
 
-Set it in the gateway's environment, not just your shell — the index reads it
-per request.
+It must be the **vault root** — the directory *containing* `AI Workspace/资讯检索`,
+not that subdirectory itself. Set it in the gateway's environment rather than in
+one terminal only: the gateway reads it per request and will not see a variable
+exported somewhere else. Unset, the knowledge page says so.
+
+Then let the skill create the tree inside it:
+
+```bash
+python3 nanobot/skills/literature-search/scripts/paperctl.py vault-init
+```
+
+It takes the root from `$OBSIDIAN_VAULT`, or `--vault PATH`. With the vault set,
+**Settings → Knowledge** shows your cards instead of a prompt to configure one.
 
 ## Why "nanobot" still appears in places
 
