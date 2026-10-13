@@ -243,7 +243,12 @@ class SkillsLoader:
                 continue
 
             resolved_root = root.expanduser().resolve()
-            if use_relative_roots:
+            # Only the groups that actually live under the workspace may be
+            # abbreviated. A builtin skill lives in the installed package, so
+            # calling its root `skills` points the agent at
+            # `<workspace>/skills/...`, which does not exist -- harmless for a
+            # prose-only skill, fatal for one that names its own scripts.
+            if use_relative_roots and source != "builtin":
                 display_root = Path("plugins" if source == "plugin" else "skills")
             else:
                 display_root = resolved_root

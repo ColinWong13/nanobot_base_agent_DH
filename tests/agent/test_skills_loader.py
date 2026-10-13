@@ -308,11 +308,17 @@ def test_build_skills_summary_uses_relative_roots_in_agent_workspace(tmp_path: P
 
     summary = SkillsLoader(workspace, builtin_skills_dir=builtin).build_skills_summary()
 
+    # Only the workspace group may abbreviate its root. That group really is
+    # `<cwd>/skills`, so the shorthand resolves. The builtin group lives in the
+    # installed package and is never under the workspace, so calling its root
+    # `skills` is not shorthand but a wrong answer -- and since this summary is
+    # how the agent finds a skill to `read_file`, a wrong root makes every
+    # builtin skill unreadable rather than merely untidy. The entries stay
+    # relative to whichever root their own header names.
+    assert summary.count("(`skills`)") == 1
     assert str(workspace_skills) not in summary
-    assert str(builtin) not in summary
     assert str(workspace_path) not in summary
-    assert str(builtin_path) not in summary
-    assert summary.count("(`skills`)") == 2
+    assert f"### Built-in skills (`{builtin.resolve()}`)" in summary
     assert "`alpha/SKILL.md`" in summary
     assert "`beta/SKILL.md`" in summary
 
