@@ -40,11 +40,12 @@ from loguru import logger
 
 from nanobot.config.paths import get_workspace_path
 
-# The vault path is `paperctl.py`'s fact, and it holds the same default and
-# honours the same variable -- the env var is the contract between the two
-# copies. Overriding it in the gateway's environment moves both at once.
+# The vault path is `paperctl.py`'s fact, and it reads the same variable -- the
+# env var is the contract between the two copies. Setting it in the gateway's
+# environment moves both at once. Neither copy carries a default: a vault is the
+# user's own directory, and guessing one would render an empty page instead of
+# saying that nobody has said where it is.
 VAULT_ENV = "OBSIDIAN_VAULT"
-_DEFAULT_VAULT = Path("/Users/colin/Desktop/MD files for ob")
 _SUBDIR = "AI Workspace/资讯检索"
 _PAPERS_DIR = "10-Papers"
 _REVIEWS_DIR = "20-Reviews"
@@ -72,9 +73,27 @@ _CACHE: dict[str, Any] = {"fingerprint": None, "payload": None}
 # --- where the vault is -----------------------------------------------------
 
 
+class VaultNotConfiguredError(RuntimeError):
+    """Raised when ``OBSIDIAN_VAULT`` is unset.
+
+    Deliberately a different failure from a ``FileNotFoundError`` on the vault.
+    That one means the variable is set and names a directory that is not there
+    yet -- a ``vault-init`` away from working. This one means nobody has said
+    where the vault is, and no amount of creating directories fixes it, so the
+    two must not be reported with the same sentence.
+    """
+
+
 def vault_root() -> Path:
     """Return the Obsidian vault root, honouring ``OBSIDIAN_VAULT``."""
-    return Path(os.environ.get(VAULT_ENV) or _DEFAULT_VAULT)
+    configured = os.environ.get(VAULT_ENV)
+    if not configured:
+        raise VaultNotConfiguredError(
+            f"{VAULT_ENV} is not set, so there is no vault to read. Set it to your "
+            'Obsidian vault root -- the directory containing "AI Workspace/资讯检索", '
+            "not that directory itself -- and restart the gateway so it sees it."
+        )
+    return Path(configured).expanduser()
 
 
 def workspace_dir() -> Path:

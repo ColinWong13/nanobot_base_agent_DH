@@ -150,6 +150,7 @@ from nanobot.webui.transcript import (
     webui_transcript_revision,
 )
 from nanobot.webui.vault_index import (
+    VaultNotConfiguredError,
     read_inquiries,
     read_knowledge_index,
     workspace_dir,
@@ -1896,11 +1897,16 @@ class GatewayHTTPHandler:
             return _http_error(401, "Unauthorized")
         try:
             payload = read_knowledge_index()
+        except VaultNotConfiguredError as exc:
+            # 404 rather than 500: the browse page treats it as the "no vault
+            # yet" empty state and shows this sentence verbatim, which is the
+            # whole point of the message naming the variable to set.
+            return _http_error(404, str(exc))
         except FileNotFoundError:
             return _http_error(
                 404,
-                f"no literature workspace at {workspace_dir()}; create one with "
-                "skills/literature-search/scripts/paperctl.py vault-init",
+                f"no literature workspace at {workspace_dir()}; create it with the "
+                "literature-search skill (`paperctl.py vault-init`)",
             )
         except OSError:
             self._log.exception("failed to read the Obsidian vault")
